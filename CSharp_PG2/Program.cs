@@ -1,4 +1,6 @@
 ﻿using System;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 namespace CSharp_PG2
 {
@@ -6,10 +8,20 @@ namespace CSharp_PG2
     {
         static void Main(string[] args)
         {
-            using (Game game = new Game(800, 600, "LearnOpenTK"))
+            var gameWindowSettings = new GameWindowSettings
             {
-                game.Run();
                 
+            };
+
+            var nativeWindowSettings = new NativeWindowSettings
+            {
+                Size = new OpenTK.Mathematics.Vector2i(800, 600),
+                Title = "My Game"
+            };
+
+            using (var gameWindow = new Game(gameWindowSettings, nativeWindowSettings))
+            {
+                gameWindow.Run();
             }
 
         }
