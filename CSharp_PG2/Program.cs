@@ -8,6 +8,9 @@ namespace CSharp_PG2
     {
         static void Main(string[] args)
         {
+            // Print
+            Console.WriteLine("Hello World!");
+
             var gameWindowSettings = new GameWindowSettings
             {
                 
