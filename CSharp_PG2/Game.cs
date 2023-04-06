@@ -1,11 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Diagnostics;
-using OpenTK;
-using OpenTK.Graphics;
+using System.Runtime.InteropServices;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2
@@ -15,17 +13,16 @@ namespace CSharp_PG2
         private int frameCount;
         private Stopwatch timer = new Stopwatch();
         
-        private int _vertexBufferObject;
+        private int _vbo;
         
-        private int _vertexArrayObject;
+        private int _vao;
+        
+        private static DebugProc _debugProcCallback = DebugCallback;
+        private static GCHandle _debugProcCallbackHandle;
 
         private Shader _shader;
-        
-        private float[] _vertices = {
-            -0.5f, -0.5f, 0.0f, //Bottom-left vertex
-            0.5f, -0.5f, 0.0f, //Bottom-right vertex
-            0.0f,  0.5f, 0.0f  //Top vertex
-        };
+
+        private float[] _vertices;
 
         public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
                     : base(gameWindowSettings, nativeWindowSettings)
@@ -34,22 +31,36 @@ namespace CSharp_PG2
         protected override void OnLoad()
         {
             base.OnLoad();
+            
             GL.ClearColor(Color4.Black);
             GL.Enable(EnableCap.DepthTest);
-            _vertexBufferObject = GL.GenBuffer();
+            _vbo = GL.GenBuffer();
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+            _shader = new Shader("Shaders/basic/basic.vert", "Shaders/basic/basic.frag");
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
             
+            _vertices = GenerateAnnulus(0.0f, 0.0f, 0.5f, 100);
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
+            _vao = GL.GenVertexArray();
+            GL.BindVertexArray(_vao);
             
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-            
-            _shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
+
+
+            _debugProcCallbackHandle = GCHandle.Alloc(_debugProcCallback);
+
+            // Enable debug output
+            GL.Enable(EnableCap.DebugOutput);
+            GL.Enable(EnableCap.DebugOutputSynchronous);
+
+            // Set up debug output callback
+            GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
+
             _shader.Use();
             timer.Start();
+            Console.WriteLine("OnLoad");
         }
 
         protected override void OnResize(ResizeEventArgs e)
@@ -72,12 +83,11 @@ namespace CSharp_PG2
         {
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            // Render your game here
 
             _shader.Use();
-            GL.BindVertexArray(_vertexArrayObject);
+            GL.BindVertexArray(_vbo);
             
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length);
             
             this.SwapBuffers();
             this.frameCount++;
@@ -88,11 +98,35 @@ namespace CSharp_PG2
                 this.timer.Restart();
             }
         }
+        
+        private static void DebugCallback(DebugSource source, DebugType type, int id,
+            DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
+        {
+            string messageString = Marshal.PtrToStringAnsi(message, length);
+            Console.WriteLine($"{severity} {type} | {messageString}");
 
+            if (type == DebugType.DebugTypeError)
+                throw new Exception(messageString);
+        }
 
-
-
-
-
+        public float[] GenerateAnnulus(float centerX, float centerY, float radius, int numVertices)
+        {
+            float[] vertices = new float[numVertices * 3];
+            
+            var angleStep = (float)(2.0f * Math.PI / numVertices);
+            
+            // Compute the coordinates of the outer vertices
+            for (int i = 0; i < numVertices; i++)
+            {
+                var angle = i * angleStep;
+                var x = centerX + radius * (float)Math.Cos(angle);
+                var y = centerY + radius * (float)Math.Sin(angle);
+                vertices[i * 3] = x;
+                vertices[i * 3 + 1] = y;
+                vertices[i * 3 + 2] = 0.0f; // z-coordinate is zero (assuming 2D plane)
+            }
+    
+            return vertices;
+        }
     }
 }

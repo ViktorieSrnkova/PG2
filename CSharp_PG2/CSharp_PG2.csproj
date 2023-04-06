@@ -11,11 +11,16 @@
 
   <ItemGroup>
     <None Remove="Shaders\shader.vert" />
-    <Content Include="Shaders\shader.vert">
+    <None Remove="Shaders\shader.frag" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shaders\basic\basic.frag" />
+    <Content Include="Shaders\basic\basic.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Remove="Shaders\shader.frag" />
-    <Content Include="Shaders\shader.frag">
+    <None Remove="Shaders\basic\basic.vert" />
+    <Content Include="Shaders\basic\basic.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

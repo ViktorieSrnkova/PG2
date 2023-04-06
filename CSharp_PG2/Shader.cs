@@ -6,7 +6,7 @@ namespace CSharp_PG2
 {
     public class Shader
     {
-        private readonly int _handle;
+        public readonly int Handle;
 
         public Shader(string vertexPath, string fragmentPath)
         {
@@ -23,21 +23,21 @@ namespace CSharp_PG2
             GL.ShaderSource(fragmentShader, fragmentShaderSource);
             CompileShader(fragmentShader);
 
-            _handle = GL.CreateProgram();
-            GL.AttachShader(_handle, vertexShader);
-            GL.AttachShader(_handle, fragmentShader);
+            Handle = GL.CreateProgram();
+            GL.AttachShader(Handle, vertexShader);
+            GL.AttachShader(Handle, fragmentShader);
 
-            LinkProgram(_handle);
+            LinkProgram(Handle);
 
-            GL.DetachShader(_handle, vertexShader);
-            GL.DetachShader(_handle, fragmentShader);
+            GL.DetachShader(Handle, vertexShader);
+            GL.DetachShader(Handle, fragmentShader);
             GL.DeleteShader(fragmentShader);
             GL.DeleteShader(vertexShader);
         }
 
         public void Use()
         {
-            GL.UseProgram(_handle);
+            GL.UseProgram(Handle);
         }
 
         private static void CompileShader(int shader)
@@ -69,7 +69,7 @@ namespace CSharp_PG2
         {
             if (!disposedValue)
             {
-                GL.DeleteProgram(_handle);
+                GL.DeleteProgram(Handle);
 
                 disposedValue = true;
             }
@@ -77,7 +77,7 @@ namespace CSharp_PG2
 
         ~Shader()
         {
-            GL.DeleteProgram(_handle);
+            GL.DeleteProgram(Handle);
         }
 
 
