@@ -73,6 +73,15 @@ public class Camera
 
         UpdateCameraVectors();
     }
+    
+    public void Rotate(float yaw, float pitch, float roll)
+    {
+        _yaw += yaw;
+        _pitch += pitch;
+        _roll += roll;
+        
+        UpdateCameraVectors();
+    }
 
     private void UpdateCameraVectors()
     {

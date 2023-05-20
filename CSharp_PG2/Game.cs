@@ -4,6 +4,7 @@ using OpenTK.Windowing.Desktop;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CSharp_PG2.Utils;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -12,19 +13,24 @@ namespace CSharp_PG2;
 class Game : GameWindow
 {
     private const float FOV = 90;
-    
-    private readonly Vertex[] _vertices =
+
+    private readonly float[] _vertices =
     {
-        new Vertex {Position = new Vector3(-0.5f, -0.5f, 0.5f), Color = new Vector3(1, 0, 0)},
-        new Vertex {Position = new Vector3(0.5f, -0.5f, 0.5f), Color = new Vector3(0, 1, 0)},
-        new Vertex {Position = new Vector3(0.5f, 0.5f, 0.5f), Color = new Vector3(0, 0, 1)},
-        new Vertex {Position = new Vector3(-0.5f, 0.5f, 0.5f), Color = new Vector3(1, 1, 1)},
+        -0.5f, 0.0f, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f, 0.83f, 0.70f, 0.44f, 5.0f, 0.0f,
+        0.5f, 0.0f, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
+        0.5f, 0.0f, 0.5f, 0.83f, 0.70f, 0.44f, 5.0f, 0.0f,
+        0.0f, 0.8f, 0.0f, 0.92f, 0.86f, 0.76f, 2.5f, 5.0f
     };
 
     private readonly uint[] _indices =
     {
-        0, 2, 1,
-        0, 3, 2
+        0, 1, 2,
+        0, 2, 3,
+        0, 1, 4,
+        1, 2, 4,
+        2, 3, 4,
+        3, 0, 4
     };
 
     private bool _mouseGrabbed = false;
@@ -36,13 +42,13 @@ class Game : GameWindow
 
     private int _frameCount;
     private Stopwatch _timer = new Stopwatch();
-    
+
     private Mesh _mesh;
 
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
 
     private Shader _shader;
-    
+
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
     {
@@ -69,12 +75,16 @@ class Game : GameWindow
         GL.Enable(EnableCap.DebugOutput);
         GL.Enable(EnableCap.DebugOutputSynchronous);
 
+        // Enable depth testing
+        GL.Enable(EnableCap.DepthTest);
+
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
 
         _shader = new Shader("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
 
-        _mesh = new Mesh(_shader, _vertices, _indices);
+        var vertices = VertexUtils.ConvertToVertices(_vertices);
+        _mesh = new Mesh(_shader, vertices, _indices);
 
         _timer.Start();
         Console.WriteLine("OnLoad");
@@ -117,11 +127,10 @@ class Game : GameWindow
     {
         base.OnRenderFrame(e);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        
 
         HandleKeyboardInput(e.Time);
 
-        _mesh.Draw(_model,_camera.GetViewMatrix(), _projection );
+        _mesh.Draw(_model, _camera.GetViewMatrix(), _projection);
 
         _frameCount++;
         if (this._timer.ElapsedMilliseconds >= 1000)
