@@ -58,13 +58,13 @@ namespace CSharp_PG2
         {
             _shader.Use();
             
-            var modelLocation = GL.GetUniformLocation(_shader.Handle, "uM_m");
+            var modelLocation = GL.GetUniformLocation(_shader.Handle, "model");
             GL.UniformMatrix4(modelLocation, false, ref model);
             
-            var viewLocation = GL.GetUniformLocation(_shader.Handle, "uV_m");
+            var viewLocation = GL.GetUniformLocation(_shader.Handle, "view");
             GL.UniformMatrix4(viewLocation, false, ref view);
             
-            var projectionLocation = GL.GetUniformLocation(_shader.Handle, "uP_m");
+            var projectionLocation = GL.GetUniformLocation(_shader.Handle, "proj");
             GL.UniformMatrix4(projectionLocation, false, ref projection);
             
             GL.BindVertexArray(_vao);
