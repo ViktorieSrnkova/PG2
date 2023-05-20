@@ -14,14 +14,14 @@ namespace CSharp_PG2
         private readonly Shader _shader;
         private readonly Vertex[] _vertices;
         private readonly uint[] _indices;
-        private readonly int primitiveType;
+        private readonly int _primitiveType;
         
         public Mesh(Shader shader, Vertex[] vertices, uint[] indices, int primitiveType = (int)PrimitiveType.Triangles)
         {
             _shader = shader;
             _vertices = vertices;
             _indices = indices;
-            this.primitiveType = primitiveType;
+            _primitiveType = primitiveType;
             
             // Generate VAO, VBO, EBO
             _vao = GL.GenVertexArray();
@@ -68,7 +68,7 @@ namespace CSharp_PG2
             GL.UniformMatrix4(projectionLocation, false, ref projection);
             
             GL.BindVertexArray(_vao);
-            GL.DrawElements((PrimitiveType)primitiveType, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements((PrimitiveType)_primitiveType, _indices.Length, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
         }
     }
