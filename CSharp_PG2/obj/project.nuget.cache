@@ -1,22 +1,23 @@
 {
   "version": 2,
-  "dgSpecHash": "bvTG7MLK7IzJzkMg/UbkBmhzmxwhUrnVHblYC3JRjt7UU8q6DYAOGU6tnpk6suoX/TZmg95yiR/krdERNTD5Ww==",
+  "dgSpecHash": "TUB3Xuu4Z7rH3877R5Y58Vm89Rm6AOyhPh6k0eGJpEyKO6PDCcDRdH/5abXtReXOUMAtchTd/cZUhr44g58hqw==",
   "success": true,
-  "projectFilePath": "/home/vvoleman/RiderProjects/PG2/CSharp_PG2/CSharp_PG2.csproj",
+  "projectFilePath": "C:\\Users\\vikys.DESKTOP-2T2RQ13\\RiderProjects\\PG2\\CSharp_PG2\\CSharp_PG2.csproj",
   "expectedPackageFiles": [
-    "/home/vvoleman/.nuget/packages/opentk/4.7.7/opentk.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.compute/4.7.7/opentk.compute.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.core/4.7.7/opentk.core.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.graphics/4.7.7/opentk.graphics.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.input/4.7.7/opentk.input.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.mathematics/4.7.7/opentk.mathematics.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.openal/4.7.7/opentk.openal.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.redist.glfw/3.3.8.30/opentk.redist.glfw.3.3.8.30.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.windowing.common/4.7.7/opentk.windowing.common.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.windowing.desktop/4.7.7/opentk.windowing.desktop.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/opentk.windowing.graphicslibraryframework/4.7.7/opentk.windowing.graphicslibraryframework.4.7.7.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/stbimagesharp/2.27.13/stbimagesharp.2.27.13.nupkg.sha512",
-    "/home/vvoleman/.nuget/packages/system.runtime.compilerservices.unsafe/5.0.0/system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk\\4.7.7\\opentk.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.compute\\4.7.7\\opentk.compute.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.core\\4.7.7\\opentk.core.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.graphics\\4.7.7\\opentk.graphics.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.input\\4.7.7\\opentk.input.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.mathematics\\4.7.7\\opentk.mathematics.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.openal\\4.7.7\\opentk.openal.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.redist.glfw\\3.3.8.30\\opentk.redist.glfw.3.3.8.30.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.windowing.common\\4.7.7\\opentk.windowing.common.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.windowing.desktop\\4.7.7\\opentk.windowing.desktop.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.7.7\\opentk.windowing.graphicslibraryframework.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\stbimagesharp\\2.27.13\\stbimagesharp.2.27.13.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.32\\microsoft.netcore.app.host.win-x64.3.1.32.nupkg.sha512"
   ],
   "logs": []
 }

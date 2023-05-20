@@ -432,24 +432,31 @@
     ]
   },
   "packageFolders": {
-    "/home/vvoleman/.nuget/packages/": {}
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/vvoleman/RiderProjects/PG2/CSharp_PG2/CSharp_PG2.csproj",
+      "projectUniqueName": "C:\\Users\\vikys.DESKTOP-2T2RQ13\\RiderProjects\\PG2\\CSharp_PG2\\CSharp_PG2.csproj",
       "projectName": "CSharp_PG2",
-      "projectPath": "/home/vvoleman/RiderProjects/PG2/CSharp_PG2/CSharp_PG2.csproj",
-      "packagesPath": "/home/vvoleman/.nuget/packages/",
-      "outputPath": "/home/vvoleman/RiderProjects/PG2/CSharp_PG2/obj/",
+      "projectPath": "C:\\Users\\vikys.DESKTOP-2T2RQ13\\RiderProjects\\PG2\\CSharp_PG2\\CSharp_PG2.csproj",
+      "packagesPath": "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\vikys.DESKTOP-2T2RQ13\\RiderProjects\\PG2\\CSharp_PG2\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/home/vvoleman/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\vikys.DESKTOP-2T2RQ13\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -488,12 +495,18 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[3.1.32, 3.1.32]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/vvoleman/.dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
       }
     }
   }

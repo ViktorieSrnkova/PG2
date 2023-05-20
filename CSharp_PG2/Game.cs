@@ -15,12 +15,12 @@ class Game : GameWindow
     private const float FOV = 90;
 
     private readonly float[] _vertices =
-    {
-        -0.5f, 0.0f, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-        -0.5f, 0.0f, -0.5f, 0.83f, 0.70f, 0.44f, 5.0f, 0.0f,
-        0.5f, 0.0f, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-        0.5f, 0.0f, 0.5f, 0.83f, 0.70f, 0.44f, 5.0f, 0.0f,
-        0.0f, 0.8f, 0.0f, 0.92f, 0.86f, 0.76f, 2.5f, 5.0f
+    {   // 3x position         //3x color                //2x tex coords
+        -0.5f, 0.0f, 0.5f,     0.83f, 0.70f, 0.44f,      0.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f,    0.83f, 0.70f, 0.44f,      5.0f, 0.0f,
+        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,      0.0f, 0.0f,
+        0.5f, 0.0f, 0.5f,      0.83f, 0.70f, 0.44f,      5.0f, 0.0f,
+        0.0f, 0.8f, 0.0f,      0.83f, 0.70f, 0.44f,      5.0f, 0.0f
     };
 
     private readonly uint[] _indices =
@@ -33,6 +33,37 @@ class Game : GameWindow
         3, 0, 4
     };
 
+    private readonly float[] _lightVertices =
+    {
+        //COORDINATES//         //color                         //poz
+        -0.1f, -0.1f, 0.1f,     1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        -0.1f, -0.1f, -0.1f,    1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        0.1f, -0.1f, -0.1f,     1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        0.1f, -0.1f, 0.1f,      1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        -0.1f, 0.1f, 0.1f,      1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        -0.1f, 0.1f, -0.1f,     1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        0.1f, 0.1f, -0.1f,      1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
+        0.1f, 0.1f, 0.1f,        1.0f, 1.0f, 1.0f,        0.9f, 0.9f
+
+    };
+
+    private readonly uint[] _lightIndices =
+    {
+        0, 1, 2,
+        0, 2, 3,
+        0, 4, 7,
+        0, 7, 3,
+        3, 7, 6,
+        3, 6, 2,
+        2, 6, 5,
+        2, 5, 1,
+        1, 5, 4,
+        1, 4, 0,
+        4, 5, 6,
+        4, 6, 7
+    };
+    
+
     private bool _mouseGrabbed = false;
     private Matrix4 _projection;
     private Matrix4 _model = Matrix4.Identity;
@@ -44,6 +75,7 @@ class Game : GameWindow
     private Stopwatch _timer = new Stopwatch();
 
     private Mesh _mesh;
+    private Mesh _mesh2;
 
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
 
@@ -85,7 +117,10 @@ class Game : GameWindow
 
         var vertices = VertexUtils.ConvertToVertices(_vertices);
         _mesh = new Mesh(_shader, vertices, _indices);
-
+        
+        var lightVertices = VertexUtils.ConvertToVertices(_lightVertices);
+        _mesh2 = new Mesh(_shader, lightVertices, _lightIndices);
+        
         _timer.Start();
         Console.WriteLine("OnLoad");
 
@@ -131,6 +166,7 @@ class Game : GameWindow
         HandleKeyboardInput(e.Time);
 
         _mesh.Draw(_model, _camera.GetViewMatrix(), _projection);
+        _mesh2.Draw(_model, _camera.GetViewMatrix(), _projection);
 
         _frameCount++;
         if (this._timer.ElapsedMilliseconds >= 1000)
