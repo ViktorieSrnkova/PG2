@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ieQ3IodN2NsrE7Zk0DMDUfZp8MGmHV/xCprF9eyDd5JVAWsYnGUDv62791ZLQxOf7QZb4gfTr1T9Wzj3wDr5zg==",
+  "dgSpecHash": "bvTG7MLK7IzJzkMg/UbkBmhzmxwhUrnVHblYC3JRjt7UU8q6DYAOGU6tnpk6suoX/TZmg95yiR/krdERNTD5Ww==",
   "success": true,
   "projectFilePath": "/home/vvoleman/RiderProjects/PG2/CSharp_PG2/CSharp_PG2.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "/home/vvoleman/.nuget/packages/opentk.windowing.common/4.7.7/opentk.windowing.common.4.7.7.nupkg.sha512",
     "/home/vvoleman/.nuget/packages/opentk.windowing.desktop/4.7.7/opentk.windowing.desktop.4.7.7.nupkg.sha512",
     "/home/vvoleman/.nuget/packages/opentk.windowing.graphicslibraryframework/4.7.7/opentk.windowing.graphicslibraryframework.4.7.7.nupkg.sha512",
+    "/home/vvoleman/.nuget/packages/stbimagesharp/2.27.13/stbimagesharp.2.27.13.nupkg.sha512",
     "/home/vvoleman/.nuget/packages/system.runtime.compilerservices.unsafe/5.0.0/system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
   ],
   "logs": []

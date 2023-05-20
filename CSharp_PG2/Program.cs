@@ -1,32 +1,18 @@
-﻿using System;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
+﻿using OpenTK.Windowing.Desktop;
 
-namespace CSharp_PG2
+namespace CSharp_PG2;
+
+public static class Program
 {
-    class Program
+    private static void Main(string[] args)
     {
-        static void Main(string[] args)
+        var nativeWindowSettings = new NativeWindowSettings
         {
-            // Print
-            Console.WriteLine("Hello World!");
+            Size = new OpenTK.Mathematics.Vector2i(800, 600),
+            Title = "My Game"
+        };
 
-            var gameWindowSettings = new GameWindowSettings
-            {
-                
-            };
-
-            var nativeWindowSettings = new NativeWindowSettings
-            {
-                Size = new OpenTK.Mathematics.Vector2i(800, 600),
-                Title = "My Game"
-            };
-
-            using (var gameWindow = new Game(gameWindowSettings, nativeWindowSettings))
-            {
-                gameWindow.Run();
-            }
-
-        }
+        using var gameWindow = new Game(GameWindowSettings.Default, nativeWindowSettings);
+        gameWindow.Run();
     }
 }

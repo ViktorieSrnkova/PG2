@@ -5,128 +5,223 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace CSharp_PG2
+namespace CSharp_PG2;
+
+class Game : GameWindow
 {
-    class Game : GameWindow
-    {
-        private int frameCount;
-        private Stopwatch timer = new Stopwatch();
-        
-        private int _vbo;
-        
-        private int _vao;
-        
-        private static DebugProc _debugProcCallback = DebugCallback;
-        private static GCHandle _debugProcCallbackHandle;
-
-        private Shader _shader;
-
-        private float[] _vertices;
-
-        public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
-                    : base(gameWindowSettings, nativeWindowSettings)
-        {
-        }
-        protected override void OnLoad()
-        {
-            base.OnLoad();
-            
-            GL.ClearColor(Color4.Black);
-            GL.Enable(EnableCap.DepthTest);
-            _vbo = GL.GenBuffer();
-            
-            _shader = new Shader("Shaders/basic/basic.vert", "Shaders/basic/basic.frag");
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
-            
-            _vertices = GenerateAnnulus(0.0f, 0.0f, 0.5f, 100);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
-            _vao = GL.GenVertexArray();
-            GL.BindVertexArray(_vao);
-            
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
-
-
-            _debugProcCallbackHandle = GCHandle.Alloc(_debugProcCallback);
-
-            // Enable debug output
-            GL.Enable(EnableCap.DebugOutput);
-            GL.Enable(EnableCap.DebugOutputSynchronous);
-
-            // Set up debug output callback
-            GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
-
-            _shader.Use();
-            timer.Start();
-            Console.WriteLine("OnLoad");
-        }
-
-        protected override void OnResize(ResizeEventArgs e)
-        {
-            base.OnResize(e);
-
-            GL.Viewport(0, 0, e.Width, e.Height);
-        }
-        
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
-            if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
-            {
-                this.Close();
-            }
-        }
-
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            base.OnRenderFrame(e);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            _shader.Use();
-            GL.BindVertexArray(_vbo);
-            
-            GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length);
-            
-            this.SwapBuffers();
-            this.frameCount++;
-            if (this.timer.ElapsedMilliseconds >= 1000)
-            {
-                this.Title = $"FPS: {this.frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
-                this.frameCount = 0;
-                this.timer.Restart();
-            }
-        }
-        
-        private static void DebugCallback(DebugSource source, DebugType type, int id,
-            DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
-        {
-            string messageString = Marshal.PtrToStringAnsi(message, length);
-            Console.WriteLine($"{severity} {type} | {messageString}");
-
-            if (type == DebugType.DebugTypeError)
-                throw new Exception(messageString);
-        }
-
-        public float[] GenerateAnnulus(float centerX, float centerY, float radius, int numVertices)
-        {
-            float[] vertices = new float[numVertices * 3];
-            
-            var angleStep = (float)(2.0f * Math.PI / numVertices);
-            
-            // Compute the coordinates of the outer vertices
-            for (int i = 0; i < numVertices; i++)
-            {
-                var angle = i * angleStep;
-                var x = centerX + radius * (float)Math.Cos(angle);
-                var y = centerY + radius * (float)Math.Sin(angle);
-                vertices[i * 3] = x;
-                vertices[i * 3 + 1] = y;
-                vertices[i * 3 + 2] = 0.0f; // z-coordinate is zero (assuming 2D plane)
-            }
+    private const float FOV = 90;
     
-            return vertices;
+    private readonly Vertex[] _vertices =
+    {
+        new Vertex {Position = new Vector3(-0.5f, -0.5f, 0.5f), Color = new Vector3(1, 0, 0)},
+        new Vertex {Position = new Vector3(0.5f, -0.5f, 0.5f), Color = new Vector3(0, 1, 0)},
+        new Vertex {Position = new Vector3(0.5f, 0.5f, 0.5f), Color = new Vector3(0, 0, 1)},
+        new Vertex {Position = new Vector3(-0.5f, 0.5f, 0.5f), Color = new Vector3(1, 1, 1)},
+    };
+
+    private readonly uint[] _indices =
+    {
+        0, 2, 1,
+        0, 3, 2
+    };
+
+    private bool _mouseGrabbed = false;
+    private Matrix4 _projection;
+    private Matrix4 _model = Matrix4.Identity;
+    private readonly Camera _camera;
+
+    private Vector2 _lastMousePosition;
+
+    private int _frameCount;
+    private Stopwatch _timer = new Stopwatch();
+    
+    private Mesh _mesh;
+
+    private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
+
+    private Shader _shader;
+    
+    public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+        : base(gameWindowSettings, nativeWindowSettings)
+    {
+        _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), 1f, 0.1f, 100f);
+        _camera = new Camera(new Vector3(0, 0, 3));
+    }
+
+    protected override void OnLoad()
+    {
+        base.OnLoad();
+
+        // Set clear color to black
+        GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
+
+        // Output base information
+        Console.WriteLine(
+            $"OpenGL Version: {GL.GetString(StringName.Version)}, GLSL Version: {GL.GetString(StringName.ShadingLanguageVersion)}");
+
+        // Enable debug
+        GL.DebugMessageCallback(OnDebugMessageDebugProc, IntPtr.Zero);
+        GL.Enable(EnableCap.DebugOutput);
+
+        // Enable debug output
+        GL.Enable(EnableCap.DebugOutput);
+        GL.Enable(EnableCap.DebugOutputSynchronous);
+
+        // Set up debug output callback
+        GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
+
+        _shader = new Shader("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
+
+        _mesh = new Mesh(_shader, _vertices, _indices);
+
+        _timer.Start();
+        Console.WriteLine("OnLoad");
+
+        SwapBuffers();
+    }
+
+    protected override void OnResize(ResizeEventArgs e)
+    {
+        base.OnResize(e);
+
+        GL.Viewport(0, 0, e.Width, e.Height);
+        UpdateProjectionMatrix(e);
+    }
+
+    protected override void OnKeyDown(KeyboardKeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+
+        switch (e.Key)
+        {
+            case Keys.Escape:
+                Close();
+                break;
+            case Keys.V:
+                ChangeVSync(Context.SwapInterval == 1 ? 0 : 1);
+                break;
+            case Keys.G:
+                _mouseGrabbed = !_mouseGrabbed;
+                CursorState = _mouseGrabbed ? CursorState.Grabbed : CursorState.Normal;
+                break;
+            case Keys.C:
+                // center camera
+                _camera.Position = new Vector3(0, 0, 3);
+                break;
         }
+    }
+
+    protected override void OnRenderFrame(FrameEventArgs e)
+    {
+        base.OnRenderFrame(e);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        
+
+        HandleKeyboardInput(e.Time);
+
+        _mesh.Draw(_model,_camera.GetViewMatrix(), _projection );
+
+        _frameCount++;
+        if (this._timer.ElapsedMilliseconds >= 1000)
+        {
+            this.Title =
+                $"FPS: {this._frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
+            this._frameCount = 0;
+            this._timer.Restart();
+        }
+
+        SwapBuffers();
+    }
+
+    private static void DebugCallback(DebugSource source, DebugType type, int id,
+        DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
+    {
+        string messageString = Marshal.PtrToStringAnsi(message, length);
+        Console.WriteLine($"{severity} {type} | {messageString}");
+
+        if (type == DebugType.DebugTypeError)
+            throw new Exception(messageString);
+    }
+
+    // Debugger handler based on official docs
+    private static void OnDebugMessage(
+        DebugSource source,
+        DebugType type,
+        int id,
+        DebugSeverity severity,
+        int length,
+        IntPtr pMessage,
+        IntPtr pUserParam)
+    {
+        string message = Marshal.PtrToStringAnsi(pMessage, length);
+        Console.WriteLine("[{0} source={1} type={2} id={3}] {4}", severity, source, type, id, message);
+        if (type == DebugType.DebugTypeError)
+        {
+            throw new Exception(message);
+        }
+    }
+
+    private void ChangeVSync(int vsync)
+    {
+        Context.SwapInterval = vsync;
+        Console.WriteLine("VSync: " + (vsync == 1 ? "On" : "Off"));
+    }
+
+    protected override void OnMouseMove(MouseMoveEventArgs e)
+    {
+        base.OnMouseMove(e);
+
+        if (_mouseGrabbed)
+        {
+            var mouseDelta = MouseState.Position - _lastMousePosition;
+
+            // Limit speed
+            if (mouseDelta.Length > 100)
+            {
+                mouseDelta = mouseDelta.Normalized() * 100;
+            }
+
+            _camera.ProcessMouseMovement(mouseDelta.X, mouseDelta.Y);
+        }
+
+        _lastMousePosition = MouseState.Position;
+    }
+
+    private void HandleKeyboardInput(double currentTime)
+    {
+        var deltaTime = 0.001f;
+        if (KeyboardState.IsKeyDown(Keys.W))
+        {
+            _camera.Position += _camera.ProcessInput(Camera.Direction.Forward, (float)deltaTime);
+        }
+
+        if (KeyboardState.IsKeyDown(Keys.S))
+        {
+            _camera.Position += _camera.ProcessInput(Camera.Direction.Backward, (float)deltaTime);
+        }
+
+        if (KeyboardState.IsKeyDown(Keys.A))
+        {
+            _camera.Position += _camera.ProcessInput(Camera.Direction.Left, (float)deltaTime);
+        }
+
+        if (KeyboardState.IsKeyDown(Keys.D))
+        {
+            _camera.Position += _camera.ProcessInput(Camera.Direction.Right, (float)deltaTime);
+        }
+    }
+
+    private void UpdateProjectionMatrix(ResizeEventArgs e)
+    {
+        var aspectRatio = (float)e.Width / e.Height;
+        var projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
+            MathHelper.DegreesToRadians(FOV), // The vertical field of view in radians
+            aspectRatio, // The aspect ratio of the window
+            0.1f, // Near clipping plane
+            100f // Far clipping plane
+        );
+        _projection = projectionMatrix;
     }
 }

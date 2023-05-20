@@ -57,5 +57,3 @@ C:/Users/vikys.DESKTOP-2T2RQ13/Documents/1TULSchool1/PG2/CSharp_PG2/CSharp_PG2/o
 /home/vvoleman/RiderProjects/PG2/CSharp_PG2/obj/Debug/netcoreapp3.1/CSharp_PG2.pdb
 /home/vvoleman/RiderProjects/PG2/CSharp_PG2/obj/Debug/netcoreapp3.1/CSharp_PG2.genruntimeconfig.cache
 /home/vvoleman/RiderProjects/PG2/CSharp_PG2/obj/Debug/netcoreapp3.1/CSharp_PG2.GeneratedMSBuildEditorConfig.editorconfig
-/home/vvoleman/RiderProjects/PG2/CSharp_PG2/bin/Debug/netcoreapp3.1/Shaders/basic/basic.frag
-/home/vvoleman/RiderProjects/PG2/CSharp_PG2/bin/Debug/netcoreapp3.1/Shaders/basic/basic.vert
