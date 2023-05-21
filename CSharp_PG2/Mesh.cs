@@ -67,6 +67,7 @@ namespace CSharp_PG2
             var projectionLocation = GL.GetUniformLocation(_shader.Handle, "proj");
             GL.UniformMatrix4(projectionLocation, false, ref projection);
             
+            
             GL.BindVertexArray(_vao);
             GL.DrawElements((PrimitiveType)_primitiveType, _indices.Length, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
