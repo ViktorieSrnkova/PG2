@@ -40,8 +40,8 @@ namespace CSharp_PG2
                 var outerColor = new Vector3(0f, 0, 1f);
 
                 // Add to list of vertices
-                vertices.Add(new Vertex { Position = innerPosition, Color = innerColor });
-                vertices.Add(new Vertex { Position = outerPosition, Color = outerColor });
+                vertices.Add(new Vertex { Position = innerPosition, Normal = innerColor });
+                vertices.Add(new Vertex { Position = outerPosition, Normal = outerColor });
 
                 // Calculate indices
                 indices.Add((uint)(i * 2));

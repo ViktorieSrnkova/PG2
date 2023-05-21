@@ -15,27 +15,27 @@ class Game : GameWindow
     private const float FOV = 90;
 
     private readonly float[] _vertices =
-    {   //     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-        0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+    {   //COORDINATES           /   Normals     /    TexCoord
+        -0.5f, 0.0f,  0.5f,     0.0f, -1.0f, 0.0f, 	 0.0f, 0.0f,      // Bottom side
+        -0.5f, 0.0f, -0.5f,     0.0f, -1.0f, 0.0f,	 0.0f, 5.0f,      // Bottom side
+        0.5f, 0.0f, -0.5f,      0.0f, -1.0f, 0.0f,	 5.0f, 5.0f,      // Bottom side
+        0.5f, 0.0f,  0.5f,      0.0f, -1.0f, 0.0f,	 5.0f, 0.0f,      // Bottom side
 
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-        0.0f, 0.8f,  0.0f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+        -0.5f, 0.0f,  0.5f,     -0.8f, 0.5f,  0.0f,	 0.0f, 0.0f,      // Left Side
+        -0.5f, 0.0f, -0.5f,     -0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,      // Left Side
+        0.0f, 0.8f,  0.0f,      -0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,      // Left Side
 
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-        0.0f, 0.8f,  0.0f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+        -0.5f, 0.0f, -0.5f,     0.0f, 0.5f, -0.8f,	 5.0f, 0.0f,       // Non-facing side
+        0.5f, 0.0f, -0.5f,      0.0f, 0.5f, -0.8f,	 0.0f, 0.0f,       // Non-facing side
+        0.0f, 0.8f,  0.0f,      0.0f, 0.5f, -0.8f,	 5.0f, 0.0f,       // Non-facing side
 
-        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-        0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-        0.0f, 0.8f,  0.0f,    0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
+        0.5f, 0.0f, -0.5f,      0.8f, 0.5f,  0.0f,	 0.0f, 0.0f,       // Right side
+        0.5f, 0.0f,  0.5f,      0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,       // Right side
+        0.0f, 0.8f,  0.0f,      0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,       // Right side
 
-        0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-        0.0f, 0.8f,  0.0f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f  // Facing side
+        0.5f, 0.0f,  0.5f,      0.0f, 0.5f,  0.8f,	 5.0f, 0.0f,       // Facing side
+        -0.5f, 0.0f,  0.5f,     0.0f, 0.5f,  0.8f, 	 0.0f, 0.0f,       // Facing side
+        0.0f, 0.8f,  0.0f,      0.0f, 0.5f,  0.8f,	 5.0f, 0.0f,       // Facing side
     };
 
     private readonly uint[] _indices =

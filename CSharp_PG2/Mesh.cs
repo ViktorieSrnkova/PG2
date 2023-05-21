@@ -46,7 +46,7 @@ namespace CSharp_PG2
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, vertexSize, 0);
 
             GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, vertexSize, Marshal.OffsetOf<Vertex>("Color"));
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, vertexSize, Marshal.OffsetOf<Vertex>("Normal"));
 
             // Unbind VAO, VBO, EBO
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
