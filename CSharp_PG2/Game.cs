@@ -78,7 +78,7 @@ class Game : GameWindow
         4, 6, 7
     };
     
-
+    
     private bool _mouseGrabbed = false;
     private Matrix4 _projection;
     private Matrix4 _model = Matrix4.Identity;
@@ -95,6 +95,7 @@ class Game : GameWindow
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
 
     private Shader _shader;
+    private Texture _texture;
 
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
@@ -129,12 +130,13 @@ class Game : GameWindow
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
 
         _shader = new Shader("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
-
+    
+        _texture.LoadTexture("wall.jpg");
         var vertices = VertexUtils.ConvertToVertices(_vertices);
-        _mesh = new Mesh(_shader, vertices, _indices);
+        _mesh = new Mesh(_shader, vertices, _indices,_texture);
         
         var lightVertices = VertexUtils.ConvertToVertices(_lightVertices);
-        _mesh2 = new Mesh(_shader, lightVertices, _lightIndices);
+        _mesh2 = new Mesh(_shader, lightVertices, _lightIndices,_texture);
         
         _timer.Start();
         Console.WriteLine("OnLoad");

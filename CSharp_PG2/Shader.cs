@@ -86,5 +86,10 @@ namespace CSharp_PG2
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        public int GetAttribLocation(string atexcoord)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

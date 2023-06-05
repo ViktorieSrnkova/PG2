@@ -7,7 +7,6 @@ public class CameraCustom
     public Vector3 Position;
     public Vector3 Orientation = new Vector3(0.0f, 0.0f, -1.0f);
     public Vector3 Up = new Vector3(0.0f, 1.0f, 0.0f);
-
     private int _width, _height;
     
     private float _speed = 0.1f;

@@ -5,6 +5,7 @@ in vec3 color;
 in vec3 Normal;
 // Imports the current position from the Vertex Shader
 in vec3 crntPos;
+in vec2 texCoord;
 
 out vec4 outputColor;
 
@@ -14,6 +15,7 @@ uniform vec3 lightColor;
 uniform vec3 lightPos;
 // Gets the position of the camera from the main function
 uniform vec3 camPos;
+uniform sampler2D texture0;
 
 void main()
 {
@@ -38,6 +40,6 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     vec3 specular = specularStrength * spec * lightColor;
 
-    vec3 result = (ambient + diffuse + specular) * color;
-    outputColor = vec4(result, 1.0);
+    vec3 result =  color;
+    outputColor = texture(texture0,texCoord);
 }                        

@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "TUB3Xuu4Z7rH3877R5Y58Vm89Rm6AOyhPh6k0eGJpEyKO6PDCcDRdH/5abXtReXOUMAtchTd/cZUhr44g58hqw==",
+  "dgSpecHash": "WrezHllZTLJRW6/Oi6rcgTNgxo1JrOBgAjY6knu3ENf+zm92jbg9lCQjvGle/vfUK4mn2fAAtkm8ytmtExVirg==",
   "success": true,
   "projectFilePath": "C:\\Users\\vikys.DESKTOP-2T2RQ13\\RiderProjects\\PG2\\CSharp_PG2\\CSharp_PG2.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk\\4.7.7\\opentk.4.7.7.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.compute\\4.7.7\\opentk.compute.4.7.7.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.core\\4.7.7\\opentk.core.4.7.7.nupkg.sha512",
@@ -15,8 +16,10 @@
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.windowing.common\\4.7.7\\opentk.windowing.common.4.7.7.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.windowing.desktop\\4.7.7\\opentk.windowing.desktop.4.7.7.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.7.7\\opentk.windowing.graphicslibraryframework.4.7.7.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\sixlabors.imagesharp\\2.1.4\\sixlabors.imagesharp.2.1.4.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\stbimagesharp\\2.27.13\\stbimagesharp.2.27.13.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
+    "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\system.text.encoding.codepages\\5.0.0\\system.text.encoding.codepages.5.0.0.nupkg.sha512",
     "C:\\Users\\vikys.DESKTOP-2T2RQ13\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.32\\microsoft.netcore.app.host.win-x64.3.1.32.nupkg.sha512"
   ],
   "logs": []

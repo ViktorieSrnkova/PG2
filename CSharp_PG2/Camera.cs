@@ -25,7 +25,7 @@ public class Camera
     private float _roll = 0.0f;
 
     private const float MovementSpeed = 1.0f;
-    private const float MouseSensitivity = 0.25f;
+    private const float MouseSensitivity = 0.15f;
 
     public Camera(Vector3 position)
     {
@@ -61,7 +61,7 @@ public class Camera
         yOffset *= MouseSensitivity;
 
         _yaw += xOffset;
-        _pitch += yOffset;
+        _pitch -= yOffset;
 
         if (constraintPitch)
         {

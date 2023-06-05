@@ -8,12 +8,16 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.7.7" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.4" />
     <PackageReference Include="StbImageSharp" Version="2.27.13" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Shaders\shader.vert" />
     <None Remove="Shaders\shader.frag" />
+    <None Update="Textures\wall.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

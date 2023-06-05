@@ -15,13 +15,15 @@ namespace CSharp_PG2
         private readonly Vertex[] _vertices;
         private readonly uint[] _indices;
         private readonly int _primitiveType;
+        private readonly Texture? _texture;
         
-        public Mesh(Shader shader, Vertex[] vertices, uint[] indices, int primitiveType = (int)PrimitiveType.Triangles)
+        public Mesh(Shader shader, Vertex[] vertices, uint[] indices,Texture? texture, int primitiveType = (int)PrimitiveType.Triangles)
         {
             _shader = shader;
             _vertices = vertices;
             _indices = indices;
             _primitiveType = primitiveType;
+            _texture = texture;
             
             // Generate VAO, VBO, EBO
             _vao = GL.GenVertexArray();
@@ -43,11 +45,20 @@ namespace CSharp_PG2
             
             // Set vertex attributes
             GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, vertexSize, 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
             GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, vertexSize, Marshal.OffsetOf<Vertex>("Normal"));
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), Marshal.OffsetOf<Vertex>("Normal"));
+            int texCoordLocation = shader.GetAttribLocation("aTexCoord");
+            GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
+            
             // Unbind VAO, VBO, EBO
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
@@ -57,6 +68,7 @@ namespace CSharp_PG2
         public void Draw(Matrix4 model, Matrix4 view, Matrix4 projection)
         {
             _shader.Use();
+            _texture?.Use(TextureUnit.Texture0);
             
             var modelLocation = GL.GetUniformLocation(_shader.Handle, "model");
             GL.UniformMatrix4(modelLocation, false, ref model);

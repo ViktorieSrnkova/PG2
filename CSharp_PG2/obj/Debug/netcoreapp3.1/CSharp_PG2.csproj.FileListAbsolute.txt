@@ -89,3 +89,7 @@ C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\bin\Debug\netcoreapp
 C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\obj\Debug\netcoreapp3.1\CSharp_PG2.csproj.CopyComplete
 C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\obj\Debug\netcoreapp3.1\CSharp_PG2.genruntimeconfig.cache
 /home/vvoleman/RiderProjects/PG2/CSharp_PG2/bin/Debug/netcoreapp3.1/StbImageSharp.dll
+C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\bin\Debug\netcoreapp3.1\Textures\wall.jpg
+C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\bin\Debug\netcoreapp3.1\SixLabors.ImageSharp.dll
+C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\bin\Debug\netcoreapp3.1\System.Text.Encoding.CodePages.dll
+C:\Users\vikys.DESKTOP-2T2RQ13\RiderProjects\PG2\CSharp_PG2\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Text.Encoding.CodePages.dll

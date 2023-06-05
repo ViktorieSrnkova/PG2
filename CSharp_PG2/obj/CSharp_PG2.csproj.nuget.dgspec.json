@@ -48,6 +48,10 @@
               "target": "Package",
               "version": "[4.7.7, )"
             },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[2.1.4, )"
+            },
             "StbImageSharp": {
               "target": "Package",
               "version": "[2.27.13, )"
