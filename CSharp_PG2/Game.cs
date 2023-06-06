@@ -2,6 +2,7 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharp_PG2.Utils;
@@ -13,29 +14,30 @@ namespace CSharp_PG2;
 class Game : GameWindow
 {
     private const float FOV = 90;
-
+    
     private readonly float[] _vertices =
-    {   //COORDINATES           /   Normals     /    TexCoord
-        -0.5f, 0.0f,  0.5f,     0.0f, -1.0f, 0.0f, 	 0.0f, 0.0f,      // Bottom side
-        -0.5f, 0.0f, -0.5f,     0.0f, -1.0f, 0.0f,	 0.0f, 5.0f,      // Bottom side
-        0.5f, 0.0f, -0.5f,      0.0f, -1.0f, 0.0f,	 5.0f, 5.0f,      // Bottom side
-        0.5f, 0.0f,  0.5f,      0.0f, -1.0f, 0.0f,	 5.0f, 0.0f,      // Bottom side
+    {
+        //COORDINATES           /   Normals     /    TexCoord
+        -0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // Bottom side
+        -0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // Bottom side
+        0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f, 5.0f, 5.0f, // Bottom side
+        0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // Bottom side
 
-        -0.5f, 0.0f,  0.5f,     -0.8f, 0.5f,  0.0f,	 0.0f, 0.0f,      // Left Side
-        -0.5f, 0.0f, -0.5f,     -0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,      // Left Side
-        0.0f, 0.8f,  0.0f,      -0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,      // Left Side
+        -0.5f, 0.0f, 0.5f, -0.8f, 0.5f, 0.0f, 0.0f, 0.0f, // Left Side
+        -0.5f, 0.0f, -0.5f, -0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Left Side
+        0.0f, 0.8f, 0.0f, -0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Left Side
 
-        -0.5f, 0.0f, -0.5f,     0.0f, 0.5f, -0.8f,	 5.0f, 0.0f,       // Non-facing side
-        0.5f, 0.0f, -0.5f,      0.0f, 0.5f, -0.8f,	 0.0f, 0.0f,       // Non-facing side
-        0.0f, 0.8f,  0.0f,      0.0f, 0.5f, -0.8f,	 5.0f, 0.0f,       // Non-facing side
+        -0.5f, 0.0f, -0.5f, 0.0f, 0.5f, -0.8f, 5.0f, 0.0f, // Non-facing side
+        0.5f, 0.0f, -0.5f, 0.0f, 0.5f, -0.8f, 0.0f, 0.0f, // Non-facing side
+        0.0f, 0.8f, 0.0f, 0.0f, 0.5f, -0.8f, 5.0f, 0.0f, // Non-facing side
 
-        0.5f, 0.0f, -0.5f,      0.8f, 0.5f,  0.0f,	 0.0f, 0.0f,       // Right side
-        0.5f, 0.0f,  0.5f,      0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,       // Right side
-        0.0f, 0.8f,  0.0f,      0.8f, 0.5f,  0.0f,	 5.0f, 0.0f,       // Right side
+        0.5f, 0.0f, -0.5f, 0.8f, 0.5f, 0.0f, 0.0f, 0.0f, // Right side
+        0.5f, 0.0f, 0.5f, 0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Right side
+        0.0f, 0.8f, 0.0f, 0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Right side
 
-        0.5f, 0.0f,  0.5f,      0.0f, 0.5f,  0.8f,	 5.0f, 0.0f,       // Facing side
-        -0.5f, 0.0f,  0.5f,     0.0f, 0.5f,  0.8f, 	 0.0f, 0.0f,       // Facing side
-        0.0f, 0.8f,  0.0f,      0.0f, 0.5f,  0.8f,	 5.0f, 0.0f,       // Facing side
+        0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.8f, 5.0f, 0.0f, // Facing side
+        -0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.8f, 0.0f, 0.0f, // Facing side
+        0.0f, 0.8f, 0.0f, 0.0f, 0.5f, 0.8f, 5.0f, 0.0f, // Facing side
     };
 
     private readonly uint[] _indices =
@@ -51,15 +53,14 @@ class Game : GameWindow
     private readonly float[] _lightVertices =
     {
         //COORDINATES//         //color                         //poz
-        -0.1f + 1, -0.1f + 1, 0.1f + 1,     1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        -0.1f + 1, -0.1f + 1, -0.1f + 1,    1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        0.1f + 1, -0.1f + 1, -0.1f +1,     1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        0.1f + 1, -0.1f + 1, 0.1f + 1,      1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        -0.1f + 1, 0.1f + 1, 0.1f + 1,      1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        -0.1f + 1, 0.1f + 1, -0.1f + 1,     1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        0.1f + 1, 0.1f + 1, -0.1f + 1,      1.0f, 1.0f, 1.0f,         0.9f, 0.9f,
-        0.1f + 1, 0.1f + 1, 0.1f + 1,        1.0f, 1.0f, 1.0f,        0.9f, 0.9f
-
+        -0.1f + 1, -0.1f + 1, 0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        -0.1f + 1, -0.1f + 1, -0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        0.1f + 1, -0.1f + 1, -0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        0.1f + 1, -0.1f + 1, 0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        -0.1f + 1, 0.1f + 1, 0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        -0.1f + 1, 0.1f + 1, -0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        0.1f + 1, 0.1f + 1, -0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f,
+        0.1f + 1, 0.1f + 1, 0.1f + 1, 1.0f, 1.0f, 1.0f, 0.9f, 0.9f
     };
 
     private readonly uint[] _lightIndices =
@@ -77,7 +78,7 @@ class Game : GameWindow
         4, 5, 6,
         4, 6, 7
     };
-    
+
 
     private bool _mouseGrabbed = false;
     private Matrix4 _projection;
@@ -89,18 +90,31 @@ class Game : GameWindow
     private int _frameCount;
     private Stopwatch _timer = new Stopwatch();
 
-    private Mesh _mesh;
-    private Mesh _mesh2;
+    private Dictionary<String, Figure> _figures = new Dictionary<string, Figure>();
 
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
 
     private Shader _shader;
+    
+    private Mesh _ground;
+    
+    private ConsoleWriter _consoleWriter = new ConsoleWriter(50);
+
+    private int fps = 0;
+
+    private readonly float[] _groundVertices =
+    {
+        -10.0f, 0.0f, -10.0f, 0, 0, 0, 0.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f, 0, 0, 0, 0.0f, 10.0f,
+        10.0f, 0.0f, 10.0f, 0, 0, 0, 10.0f, 10.0f,
+        10.0f, 0.0f, -10.0f, 0, 0, 0, 10.0f, 0.0f
+    };
 
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
     {
         _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), 1f, 0.1f, 100f);
-        _camera = new Camera(new Vector3(0, 0, 3));
+        _camera = new Camera(new Vector3(0, 1, -1));
     }
 
     protected override void OnLoad()
@@ -130,15 +144,22 @@ class Game : GameWindow
 
         _shader = new Shader("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
 
+        var groundTexture = Texture.LoadFromFile("../../../Textures/grass.png");
+        _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _indices, groundTexture);
+
         var vertices = VertexUtils.ConvertToVertices(_vertices);
-        _mesh = new Mesh(_shader, vertices, _indices);
-        
+        var texture = Texture.LoadFromFile("../../../Textures/wall.jpg");
+        var mesh = new Mesh(_shader, vertices, _indices, texture);
+        _figures.Add("triangle", new Figure(mesh, new Vector3(3, 0, 0)));
+
         var lightVertices = VertexUtils.ConvertToVertices(_lightVertices);
-        _mesh2 = new Mesh(_shader, lightVertices, _lightIndices);
-        
+        mesh = new Mesh(_shader, lightVertices, _lightIndices);
+        _figures.Add("cube", new Figure(mesh, new Vector3(0, 0, 0)));
+
         _timer.Start();
         Console.WriteLine("OnLoad");
-
+        _consoleWriter.Start();
+        
         SwapBuffers();
     }
 
@@ -180,19 +201,47 @@ class Game : GameWindow
 
         HandleKeyboardInput(e.Time);
 
-        _mesh.Draw(_model, _camera.GetViewMatrix(), _projection);
-        _mesh2.Draw(_model, _camera.GetViewMatrix(), _projection);
+        var viewMatrix = _camera.GetViewMatrix();
+        _ground.Draw(_model, viewMatrix, _projection);
+        foreach (var figure in _figures)
+        {
+            figure.Value.Draw(_camera.GetViewMatrix(), _projection);
+        }
 
+        var position = _camera.Position;
+
+        _consoleWriter.SetMessage(GetInfo());
+        
         _frameCount++;
         if (this._timer.ElapsedMilliseconds >= 1000)
         {
+            fps = _frameCount;
             this.Title =
                 $"FPS: {this._frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
-            this._frameCount = 0;
-            this._timer.Restart();
+            _frameCount = 0;
+            _timer.Restart();
         }
 
         SwapBuffers();
+    }
+
+    private Dictionary<string, string> GetInfo()
+    {
+        var position = _camera.Position;
+        var x = $"{position.X:0.00}";
+        var y = $"{position.Y:0.00}";
+        var z = $"{position.Z:0.00}";
+        var info = new Dictionary<string, string>
+        {
+            { "X", x},
+            { "Y", y},
+            { "Z", z},
+            { "FPS", fps.ToString() },
+            { "VSync", Context.SwapInterval == 1 ? "On" : "Off" },
+            { "Mouse", _mouseGrabbed ? "Grabbed" : "Normal" }
+        };
+
+        return info;
     }
 
     private static void DebugCallback(DebugSource source, DebugType type, int id,
@@ -226,7 +275,6 @@ class Game : GameWindow
     private void ChangeVSync(int vsync)
     {
         Context.SwapInterval = vsync;
-        Console.WriteLine("VSync: " + (vsync == 1 ? "On" : "Off"));
     }
 
     protected override void OnMouseMove(MouseMoveEventArgs e)
