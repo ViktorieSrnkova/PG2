@@ -2,7 +2,7 @@ using OpenTK.Mathematics;
 
 namespace CSharp_PG2;
 
-public class Figure
+public class Figure : IDisposable
 {
     private readonly Mesh _mesh;
     private Vector3 _position = Vector3.Zero;
@@ -32,4 +32,9 @@ public class Figure
         _model *= Matrix4.CreateFromAxisAngle(axis, angle);
     }
 
+
+    public void Dispose()
+    {
+        _mesh.Dispose();
+    }
 }

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CSharp_PG2.Managers.Object;
+using CSharp_PG2.Managers.Texture;
 using CSharp_PG2.Utils;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -17,37 +19,21 @@ class Game : GameWindow
     
     private readonly float[] _vertices =
     {
-        //COORDINATES           /   Normals     /    TexCoord
-        -0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // Bottom side
-        -0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // Bottom side
-        0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f, 5.0f, 5.0f, // Bottom side
-        0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // Bottom side
-
-        -0.5f, 0.0f, 0.5f, -0.8f, 0.5f, 0.0f, 0.0f, 0.0f, // Left Side
-        -0.5f, 0.0f, -0.5f, -0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Left Side
-        0.0f, 0.8f, 0.0f, -0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Left Side
-
-        -0.5f, 0.0f, -0.5f, 0.0f, 0.5f, -0.8f, 5.0f, 0.0f, // Non-facing side
-        0.5f, 0.0f, -0.5f, 0.0f, 0.5f, -0.8f, 0.0f, 0.0f, // Non-facing side
-        0.0f, 0.8f, 0.0f, 0.0f, 0.5f, -0.8f, 5.0f, 0.0f, // Non-facing side
-
-        0.5f, 0.0f, -0.5f, 0.8f, 0.5f, 0.0f, 0.0f, 0.0f, // Right side
-        0.5f, 0.0f, 0.5f, 0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Right side
-        0.0f, 0.8f, 0.0f, 0.8f, 0.5f, 0.0f, 5.0f, 0.0f, // Right side
-
-        0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.8f, 5.0f, 0.0f, // Facing side
-        -0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.8f, 0.0f, 0.0f, // Facing side
-        0.0f, 0.8f, 0.0f, 0.0f, 0.5f, 0.8f, 5.0f, 0.0f, // Facing side
+        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
+        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
+        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
+        0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
+        0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	2.5f, 5.0f
     };
 
     private readonly uint[] _indices =
     {
-        0, 1, 2, // Bottom side
-        0, 2, 3, // Bottom side
-        4, 6, 5, // Left side
-        7, 9, 8, // Non-facing side
-        10, 12, 11, // Right side
-        13, 15, 14 // Facing side
+        0, 1, 2,
+        0, 2, 3,
+        0, 1, 4,
+        1, 2, 4,
+        2, 3, 4,
+        3, 0, 4
     };
 
     private readonly float[] _lightVertices =
@@ -97,6 +83,11 @@ class Game : GameWindow
     private Shader _shader;
     
     private Mesh _ground;
+    private readonly uint[] _groundIndices =
+    {
+        0, 1, 2,
+        0, 2, 3
+    };
     
     private ConsoleWriter _consoleWriter = new ConsoleWriter(50);
 
@@ -144,13 +135,15 @@ class Game : GameWindow
 
         _shader = new Shader("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
 
-        var groundTexture = Texture.LoadFromFile("../../../Textures/grass.png");
-        _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _indices, groundTexture);
+        var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
+        _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
 
         var vertices = VertexUtils.ConvertToVertices(_vertices);
-        var texture = Texture.LoadFromFile("../../../Textures/wall.jpg");
+        var texture = TextureManager.GetInstance().GetTexture("structures:wall");
         var mesh = new Mesh(_shader, vertices, _indices, texture);
         _figures.Add("triangle", new Figure(mesh, new Vector3(3, 0, 0)));
+        
+        var test = Mesh.ReadObject("../../../Objects/cube_alt.obj");
 
         var lightVertices = VertexUtils.ConvertToVertices(_lightVertices);
         mesh = new Mesh(_shader, lightVertices, _lightIndices);
@@ -159,6 +152,8 @@ class Game : GameWindow
         _timer.Start();
         Console.WriteLine("OnLoad");
         _consoleWriter.Start();
+
+        var obj = ObjectManager.GetInstance().GetObject("cube_alt");
         
         SwapBuffers();
     }
@@ -318,6 +313,16 @@ class Game : GameWindow
         if (KeyboardState.IsKeyDown(Keys.D))
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Right, (float)deltaTime);
+        }
+        
+        if (KeyboardState.IsKeyDown(Keys.Space))
+        {
+            _camera.Position += _camera.ProcessInput(Camera.Direction.Up, (float)deltaTime);
+        }
+        
+        if (KeyboardState.IsKeyDown(Keys.LeftShift))
+        {
+            _camera.Position += _camera.ProcessInput(Camera.Direction.Down, (float)deltaTime);
         }
     }
 

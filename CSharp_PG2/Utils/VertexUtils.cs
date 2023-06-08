@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2.Utils;
 
-public class VertexUtils
+public static class VertexUtils
 {
 
     public static Vertex[] ConvertToVertices(float[] original)
@@ -21,6 +23,33 @@ public class VertexUtils
         }
         
         return vertices.ToArray();
+    }
+
+    public static Vector3? FormatVector3FromFile(string[] substrings, int offset = 1)
+    {
+        if (substrings.Length != 3+offset)
+        {
+            return null;
+        }
+
+        var a = Convert.ToSingle(substrings[1], CultureInfo.InvariantCulture);
+        var b = Convert.ToSingle(substrings[2], CultureInfo.InvariantCulture);
+        var c = Convert.ToSingle(substrings[3], CultureInfo.InvariantCulture);
+
+        return new Vector3(a, c, c);
+    }
+    
+    public static Vector2? FormatVector2FromFile(string[] substrings, int offset = 1)
+    {
+        if (substrings.Length != 2+offset)
+        {
+            return null;
+        }
+
+        var a = Convert.ToSingle(substrings[1], CultureInfo.InvariantCulture);
+        var b = Convert.ToSingle(substrings[2], CultureInfo.InvariantCulture);
+
+        return new Vector2(a, b);
     }
 
 }
