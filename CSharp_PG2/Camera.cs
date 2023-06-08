@@ -61,7 +61,7 @@ public class Camera
         yOffset *= MouseSensitivity;
 
         _yaw += xOffset;
-        _pitch += yOffset;
+        _pitch -= yOffset;
 
         if (constraintPitch)
         {

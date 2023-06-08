@@ -9,10 +9,9 @@ namespace CSharp_PG2.Utils;
 public class ConsoleWriter
 {
 
-    private Timer? _timer;
-    private int _updateInterval = 1000;
+    private Timer _timer;
+    private readonly int _updateInterval;
     private Dictionary<string, string> _buffer = new Dictionary<string, string>();
-    private Task? _task;
     private int _startLine = Console.CursorTop;
 
     public ConsoleWriter(int updateInterval)

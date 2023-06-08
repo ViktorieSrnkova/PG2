@@ -1,0 +1,5 @@
+{
+  "environment:ground": "environment/grass.png",
+  "structures:wall": "structures/walls.jpg",
+  "global:missing_texture": "missing.png"
+}
