@@ -5,7 +5,7 @@ namespace CSharp_PG2;
 public class Figure : IDisposable
 {
     private readonly Mesh _mesh;
-    private Vector3 _position = Vector3.Zero;
+    public Vector3 Position { get; set; } = Vector3.Zero;
     private Matrix4 _model = Matrix4.Identity;
     public bool IsVisible { get; set; } = true;
     
@@ -22,9 +22,10 @@ public class Figure : IDisposable
     
     public void Move(Vector3 position)
     {
-        _position += position;
+        // _position += position;
+        Position += position;
         
-        _model *= Matrix4.CreateTranslation(_position);
+        _model *= Matrix4.CreateTranslation(position);
     }
     
     public void Rotate(float angle, Vector3 axis)

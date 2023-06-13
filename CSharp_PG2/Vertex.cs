@@ -1,3 +1,4 @@
+using CSharp_PG2.Managers.Texture;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2;

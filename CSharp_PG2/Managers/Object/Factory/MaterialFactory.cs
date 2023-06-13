@@ -1,38 +1,31 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using OpenTK.Mathematics;
 using CSharp_PG2.Utils;
 
-namespace CSharp_PG2.Managers.Object;
+namespace CSharp_PG2.Managers.Object.Factory;
 
-public class Material
+public static class MaterialFactory
 {
-    public string Name { get; set; } // newmtl
-
-    public Vector3 AmbientColor { get; set; } // ambient color (RGB)
-    public Vector3 DiffuseColor { get; set; } // diffuse color (RGB)
-    public Vector3 SpecularColor { get; set; } // specular color (RGB)
-    public float SpecularHighlight { get; set; } // aka shininess
-    public float OpticalDensity { get; set; } // aka index of refraction
-    public float Dissolve { get; set; } // 1.0 = opaque; 0.0 = fully transparent
-    private string? TextureFile { get; set; } = null;
-
-    private Material()
-    {
-    }
-
-    public static Material FromFile(string path)
+    public static List<Material> FromFile(string path)
     {
         var reader = new StreamReader($"../../../Materials/{path}", Encoding.UTF8);
-        var materialInstance = new Material();
+        Material? materialInstance = null;
+        var materials = new List<Material>();
+        char[] remove = { '\t' };
         while (reader.ReadLine() is { } materialLine)
         {
             var substrings = materialLine.Split(" ");
             switch (substrings[0])
             {
                 case "newmtl":
+                    if (materialInstance != null)
+                    {
+                        materials.Add(materialInstance);
+                    }
+                    materialInstance = new Material();
                     materialInstance.Name = substrings[1];
                     break;
                 case "Ka":
@@ -89,7 +82,12 @@ public class Material
                     break;
             }
         }
+        
+        if (materialInstance != null)
+        {
+            materials.Add(materialInstance);
+        }
 
-        return materialInstance;
+        return materials;
     }
 }

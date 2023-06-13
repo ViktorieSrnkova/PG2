@@ -1,3 +1,4 @@
+using CSharp_PG2.Managers.Shader.Entity;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2;

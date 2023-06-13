@@ -4,10 +4,13 @@ using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using CSharp_PG2.Managers.Object;
+using CSharp_PG2.Managers.Shader.Entity;
 using CSharp_PG2.Managers.Texture;
 using CSharp_PG2.Utils;
+using Microsoft.VisualBasic;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -16,24 +19,34 @@ namespace CSharp_PG2;
 class Game : GameWindow
 {
     private const float FOV = 90;
-    
+
     private readonly float[] _vertices =
     {
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
-        0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
-        0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
-        0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	2.5f, 5.0f
+        -1, 1, 1, 0, 0, 0, 0.0f, 0.0f,
+        -1, -1, 1, 0, 0, 0, 0.0f, 0.0f,
+        -1, 1, -1, 0, 0, 0, 0.0f, 0.0f,
+        -1, -1, -1, 0, 0, 0, 0.0f, 0.0f,
+        1, 1, 1, 0, 0, 0, 0.0f, 0.0f,
+        1, -1, 1, 0, 0, 0, 0.0f, 0.0f,
+        1, 1, -1, 0, 0, 0, 0.0f, 0.0f,
+        1, -1, -1, 0, 0, 0, 0.0f, 0.0f,
     };
 
     private readonly uint[] _indices =
     {
-        0, 1, 2,
-        0, 2, 3,
-        0, 1, 4,
-        1, 2, 4,
-        2, 3, 4,
-        3, 0, 4
+        5,3,1,
+        3,8,4,
+        7,6,8,
+        2,8,6,
+        1,4,2,
+        5,2,6,
+        5,7,3,
+        3,7,8,
+        7,5,6,
+        2,4,8,
+        1,3,4,
+        5,1,2
+        
     };
 
     private readonly float[] _lightVertices =
@@ -81,14 +94,15 @@ class Game : GameWindow
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
 
     private Shader _shader;
-    
+
     private Mesh _ground;
+
     private readonly uint[] _groundIndices =
     {
         0, 1, 2,
         0, 2, 3
     };
-    
+
     private ConsoleWriter _consoleWriter = new ConsoleWriter(50);
 
     private int fps = 0;
@@ -133,28 +147,21 @@ class Game : GameWindow
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
 
-        _shader = new Shader("../../../Shaders/shader.vert", "../../../Shaders/shader.frag");
+        _shader = new Shader("../../../Shaders/default/shader.vert", "../../../Shaders/default/shader.frag");
 
         var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
         _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
 
-        var vertices = VertexUtils.ConvertToVertices(_vertices);
-        var texture = TextureManager.GetInstance().GetTexture("structures:wall");
-        var mesh = new Mesh(_shader, vertices, _indices, texture);
-        _figures.Add("triangle", new Figure(mesh, new Vector3(3, 0, 0)));
-        
-        var test = Mesh.ReadObject("../../../Objects/cube_alt.obj");
-
-        var lightVertices = VertexUtils.ConvertToVertices(_lightVertices);
-        mesh = new Mesh(_shader, lightVertices, _lightIndices);
-        _figures.Add("cube", new Figure(mesh, new Vector3(0, 0, 0)));
-
+        var obj = ObjectManager.GetInstance().GetObject("dog");
+        if (obj != null)
+        {
+            var mesh = obj.GetMesh();
+            // mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = groundTexture});
+            _figures.Add("dog", new Figure(mesh, new Vector3(0, 0, 0)));
+        }
         _timer.Start();
-        Console.WriteLine("OnLoad");
         _consoleWriter.Start();
 
-        var obj = ObjectManager.GetInstance().GetObject("cube_alt");
-        
         SwapBuffers();
     }
 
@@ -206,7 +213,7 @@ class Game : GameWindow
         var position = _camera.Position;
 
         _consoleWriter.SetMessage(GetInfo());
-        
+
         _frameCount++;
         if (this._timer.ElapsedMilliseconds >= 1000)
         {
@@ -226,14 +233,21 @@ class Game : GameWindow
         var x = $"{position.X:0.00}";
         var y = $"{position.Y:0.00}";
         var z = $"{position.Z:0.00}";
+        var names = new List<string>();
+        foreach (var figure in _figures)
+        {
+            var pos = figure.Value.Position;
+            names.Add($"{figure.Key}[{pos.X};{pos.Y};{pos.Z}]");
+        }
+
         var info = new Dictionary<string, string>
         {
-            { "X", x},
-            { "Y", y},
-            { "Z", z},
+            { "X", x },
+            { "Y", y },
+            { "Z", z },
             { "FPS", fps.ToString() },
             { "VSync", Context.SwapInterval == 1 ? "On" : "Off" },
-            { "Mouse", _mouseGrabbed ? "Grabbed" : "Normal" }
+            { "Objects", String.Join(", ", names.ToArray()) }
         };
 
         return info;
@@ -314,12 +328,12 @@ class Game : GameWindow
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Right, (float)deltaTime);
         }
-        
+
         if (KeyboardState.IsKeyDown(Keys.Space))
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Up, (float)deltaTime);
         }
-        
+
         if (KeyboardState.IsKeyDown(Keys.LeftShift))
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Down, (float)deltaTime);
