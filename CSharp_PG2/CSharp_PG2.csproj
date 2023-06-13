@@ -23,9 +23,4 @@
     <None Remove="Shaders\basic\basic.vert" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Shaders\shader.frag" />
-    <Content Include="Shaders\shader.vert" />
-  </ItemGroup>
-
 </Project>

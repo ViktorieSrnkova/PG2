@@ -1,5 +1,12 @@
 {
   "environment:ground": "environment/grass.png",
-  "structures:wall": "structures/walls.jpg",
-  "global:missing_texture": "missing.png"
+  "structures:wall": "structures/wall.jpg",
+  "structures:wood": "structures/wood.jpeg",
+  "global:missing_texture": "missing.png",
+  "Dog_diffuse.jpg": "Dog_diffuse.jpg",
+  "tardis/Blue_Wood_diffuse_scale0.jpg": "tardis/Blue_Wood_diffuse_scale0.jpg",
+  "tardis/Blue_Wood_specularGlossiness_gloss.jpg": "tardis/Blue_Wood_specularGlossiness_gloss.jpg",
+  "tardis/Blue_Wood_specularGlossiness_spec_scale1.jpg": "tardis/Blue_Wood_specularGlossiness_spec_scale1.jpg",
+  "tardis/PTFFUOPAAOIOCRTACPTO_diffuse.jpg": "tardis/PTFFUOPAAOIOCRTACPTO_diffuse.jpg",
+  "tardis/St._John_Ambulance_diffuse.jpg": "tardis/St._John_Ambulance_diffuse.jpg"
 }

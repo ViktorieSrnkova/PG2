@@ -9,9 +9,9 @@ using CSharp_PG2.Utils;
 
 namespace CSharp_PG2.Managers.Texture;
 
-public class TextureManager
+public class TextureManager : IDisposable
 {
-    private const string MISSING_TEXTURE = "global:missing_texture";
+    private const string MissingTexture = "global:missing_texture";
     
     private static TextureManager? _instance;
 
@@ -19,7 +19,7 @@ public class TextureManager
 
     private Dictionary<string, Texture> _textures = new Dictionary<string, Texture>();
 
-    private Logger _logger = new Logger("TextureManager");
+    private readonly Logger _logger = new Logger("TextureManager");
     
     private TextureManager()
     {
@@ -34,33 +34,12 @@ public class TextureManager
 
     public Texture? GetTexture(string name)
     {
-        if (!_atlas.TryGetValue(name, out var path))
+        if (!_textures.ContainsKey(name))
         {
-            Console.WriteLine($"TextureManager: Unable to find texture of name '{name}'");
-            return null;
+            throw new TextureNotFoundException($"Texture '{name}' not found");
         }
         
-        if (_textures.TryGetValue(name, out var texture))
-        {
-            return texture;
-        }
-        
-        path = "../../../Textures/" + path;
-
-        try
-        {
-            texture = Texture.FromFile(path);
-        }
-        catch (Exception e)
-        {
-            throw new TextureNotFoundException($"Unable to load texture '{path}'", e);
-        }
-
-        if (texture != null)
-        {
-            _textures.Add(name, texture);
-        }
-        return texture;
+        return _textures.TryGetValue(name, out var texture) ? texture : null;
     }
 
     private void LoadAtlas()
@@ -98,16 +77,24 @@ public class TextureManager
             }
             catch (Exception e)
             {
-                _logger.Error($"Unable to load texture '{name}', using missing texture");
+                _logger.Warn($"Unable to load texture '{name}', using missing texture");
                 missing.Add(name);
             }
         }
         
         foreach (var name in missing)
         {
-            _textures.Add(name, _textures[MISSING_TEXTURE]);
+            _textures.Add(name, _textures[MissingTexture]);
         }
         
         _logger.Info($"Loaded {_textures.Count} textures to memory");
+    }
+
+    public void Dispose()
+    {
+        foreach (var texture in _textures)
+        {
+            texture.Value.Dispose();
+        }
     }
 }

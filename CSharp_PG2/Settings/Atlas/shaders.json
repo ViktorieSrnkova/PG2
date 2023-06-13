@@ -1,0 +1,6 @@
+{
+  "default": {
+    "vertex": "default/shader.vert",
+    "fragment": "default/shader.frag"
+  }
+}

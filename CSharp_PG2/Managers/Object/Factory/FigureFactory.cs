@@ -3,31 +3,18 @@ using System.IO;
 using System.Text;
 using CSharp_PG2.Exceptions.Managers.Object;
 using CSharp_PG2.Utils;
-using OpenTK.Mathematics;
 
-namespace CSharp_PG2.Managers.Object;
+namespace CSharp_PG2.Managers.Object.Factory;
 
-public class Object
+using Entity;
+
+public static class FigureFactory
 {
-    public List<Vector3> Vertices { get; set; } = new List<Vector3>();
-
-    public List<Vector3> Normals { get; set; } = new List<Vector3>();
-
-    public List<Vector2> TextureCoordinates { get; set; } = new List<Vector2>();
-    
-    public List<Face> Faces { get; set; } = new List<Face>();
-    
-    public Material Material { get; set; }
-    
-    private Object()
+    public static Figure FromFile(string path)
     {
-    }
-
-    public static Object FromFile(string path)
-    {
-        StreamReader reader = new StreamReader($"../../../Objects/{path}.obj", Encoding.UTF8);
+        var reader = new StreamReader($"../../../Objects/{path}.obj", Encoding.UTF8);
         
-        var obj = new Object();
+        var obj = new Figure();
         var materials = new Dictionary<string, Material>();
         string? currentMaterial = null;
 
@@ -58,7 +45,7 @@ public class Object
                     }
                     break;
                 case "f":
-                    var face = Face.FromString(line);
+                    var face = FaceFactory.FromString(line);
                     if (face != null)
                     {
                         if (currentMaterial != null)
@@ -70,8 +57,8 @@ public class Object
                     }
                     break;
                 case "mtllib":
-                    var material = Material.FromFile(substrings[1]);
-                    if (material != null)
+                    var materialList = MaterialFactory.FromFile(substrings[1]);
+                    foreach (var material in materialList)
                     {
                         materials.Add(material.Name, material);
                     }
