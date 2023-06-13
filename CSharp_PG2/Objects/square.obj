@@ -1,0 +1,20 @@
+# Simple Square
+
+# Vertex positions
+v -0.5 0.5 0.0
+v -0.5 -0.5 0.0
+v 0.5 -0.5 0.0
+v 0.5 0.5 0.0
+
+# Vertex normals
+vn 0.0 0.0 1.0
+
+# Texture coordinates
+vt 0.0 0.0
+vt 0.0 1.0
+vt 1.0 1.0
+vt 1.0 0.0
+
+# Face definitions
+f 3/3/1 4/4/1 1/1/1
+f 1/1/1 2/2/1 3/3/1
