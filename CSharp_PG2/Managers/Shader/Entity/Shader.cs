@@ -8,6 +8,7 @@ namespace CSharp_PG2.Managers.Shader.Entity;
 
 public class Shader
 {
+    private Logger _logger = new Logger("Shader");
     public readonly int Handle;
     private readonly Dictionary<string, int> _uniformLocations = new Dictionary<string, int>();
 
@@ -36,6 +37,14 @@ public class Shader
         GL.DetachShader(Handle, fragmentShader);
         GL.DeleteShader(fragmentShader);
         GL.DeleteShader(vertexShader);
+        
+        GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+        _uniformLocations = new Dictionary<string, int>();
+        for (var i = 0; i < numberOfUniforms; i++) {
+            var key = GL.GetActiveUniform(Handle, i, out _, out _);
+            var location = GL.GetUniformLocation(Handle, key);
+            _uniformLocations.Add(key, location);
+        }
     }
 
     public void Use()
@@ -60,27 +69,48 @@ public class Shader
     }
 
     public void SetInt(string name, int data) {
-        if (!_uniformLocations.ContainsKey(name)) return;
+        if (!_uniformLocations.ContainsKey(name))
+        {
+            _logger.Warn($"Uniform '{name}' not found");
+            return;
+        };
         GL.Uniform1(_uniformLocations[name], data);
     }
 
     public void SetFloat(string name, float data) {
-        if (!_uniformLocations.ContainsKey(name)) return;
+        if (!_uniformLocations.ContainsKey(name))
+        {
+            _logger.Warn($"Uniform '{name}' not found");
+            return;
+        }
         GL.Uniform1(_uniformLocations[name], data);
     }
 
-    public void SetMatrix4(string name, Matrix4 data) {
-        if (!_uniformLocations.ContainsKey(name)) return;
+    public void SetMatrix4(string name, Matrix4 data)
+    {
+        if (!_uniformLocations.ContainsKey(name))
+        {
+            _logger.Warn($"Uniform '{name}' not found");
+            return;
+        }
         GL.UniformMatrix4(_uniformLocations[name], false, ref data);
     }
 
     public void SetVector3(string name, Vector3 data) {
-        if (!_uniformLocations.ContainsKey(name)) return;
+        if (!_uniformLocations.ContainsKey(name))
+        {
+            _logger.Warn($"Uniform '{name}' not found");
+            return;
+        }
         GL.Uniform3(_uniformLocations[name], data);
     }
     
     public void SetVector4(string name, Vector4 data) {
-        if (!_uniformLocations.ContainsKey(name)) return;
+        if (!_uniformLocations.ContainsKey(name))
+        {
+            _logger.Warn($"Uniform '{name}' not found");
+            return;
+        }
         GL.Uniform4(_uniformLocations[name], data);
     }
     

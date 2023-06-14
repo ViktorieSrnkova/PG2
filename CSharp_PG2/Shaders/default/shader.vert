@@ -18,7 +18,7 @@ void main(void)
 {
     // Position of vertex is multiplied by model, view and projection matrix
     gl_Position = proj * view * model * vec4(aPosition, 1.0);
-    Normal = aNormal;//mat3(transpose(inverse(model)))* aNormal;
+    Normal = mat3(transpose(inverse(model)))* aNormal;
     // Every position has its own color
     texCoord = aTexCoord;
     crntPos = vec3(model * vec4(aPosition, 1.0f));

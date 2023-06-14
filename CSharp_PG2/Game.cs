@@ -157,6 +157,7 @@ class Game : GameWindow
         
         
         _shader = new Shader("../../../Shaders/default/shader.vert", "../../../Shaders/default/shader.frag");
+        _shader.Use();
         _shader.SetVector4("lightColor", lightColor);
         
         // _shader.SetMatrix4("model", lightModel);
