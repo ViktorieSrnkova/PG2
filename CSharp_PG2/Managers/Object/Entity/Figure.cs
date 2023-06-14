@@ -30,7 +30,7 @@ public class Figure
         var item = FaceUtils.SimplifyFaces(Faces, Vertices, Normals, TextureCoordinates);
         var shader = ShaderManager.GetInstance().GetShader(Shader);
 
-        var textureUsage = FaceUtils.GetTextures(Faces);
+        var textureUsage = FaceUtils.GetTextures(Faces, item.Indices);
 
         if (shader == null)
         {

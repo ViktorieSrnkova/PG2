@@ -66,7 +66,7 @@ public static class FaceUtils
         };
     }
 
-    public static TextureUsage[] GetTextures(List<Face> faces)
+    public static TextureUsage[] GetTextures(List<Face> faces, uint[] indices)
     {
         var usages = new List<TextureUsage>();
         string? currentTexture = null;
