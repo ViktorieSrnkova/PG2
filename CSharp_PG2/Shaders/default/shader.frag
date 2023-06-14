@@ -13,7 +13,7 @@ uniform sampler2D texture0;
 
 void main()
 {
-    float ambient = 0.20f;
+    float ambient = 0.80f;
 
     // diffuse lighting
     vec3 normal = normalize(Normal);
@@ -28,5 +28,5 @@ void main()
     float specular = specAmount * specularLight;
 
     // outputs final color
-    FragColor = texture(texture0, texCoord) * lightColor * (diffuse + ambient + specular);
+    FragColor = texture(texture0, texCoord) * lightColor * (ambient + diffuse + specular);
 }                        

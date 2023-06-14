@@ -96,6 +96,8 @@ class Game : GameWindow
     private Shader _shader;
 
     private Mesh _ground;
+    private Mesh _pyramid;
+    private Mesh _cube;
 
     private readonly uint[] _groundIndices =
     {
@@ -151,8 +153,8 @@ class Game : GameWindow
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
 
-        var lightColor = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-        var lightPosition = new Vector3(0.5f, 0.5f, 0.5f);
+        var lightColor = new Vector4(1.0f, 1.0f, 1.5f, 1.0f);
+        var lightPosition = new Vector3(1.0f, 1.0f, 1.0f);
         var lightModel = Matrix4.CreateTranslation(lightPosition);
         
         
@@ -160,10 +162,11 @@ class Game : GameWindow
         _shader.Use();
         _shader.SetVector4("lightColor", lightColor);
         
-        // _shader.SetMatrix4("model", lightModel);
+         //_shader.SetMatrix4("model", lightModel);
 
         var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
         _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
+        _cube = new Mesh(_shader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
 
         var obj = ObjectManager.GetInstance().GetObject("dog");
         if (obj != null)
@@ -218,6 +221,7 @@ class Game : GameWindow
 
         var viewMatrix = _camera.GetViewMatrix();
         _ground.Draw(_model, viewMatrix, _projection);
+        _cube.Draw(_model,viewMatrix, _projection);
         _shader.SetVector3("camPos", _camera.Position);
 
         _shader.SetVector3("lightPos", _lightPosition);
