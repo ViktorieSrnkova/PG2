@@ -88,14 +88,14 @@ public class Mesh : IDisposable
 
         var projectionLocation = GL.GetUniformLocation(_shader.Handle, "proj");
         GL.UniformMatrix4(projectionLocation, false, ref projection);
-
+        
         GL.BindVertexArray(_vao);
         var current = 0;
         foreach (var textureUsage in TextureUsages)
         {
             textureUsage.Texture?.Use(TextureUnit.Texture0);
-            GL.DrawElements((PrimitiveType)_primitiveType, textureUsage.Length ?? _indices.Length, DrawElementsType.UnsignedInt, current * sizeof(uint));
-            current += textureUsage.Length ?? 0;
+            GL.DrawElements((PrimitiveType)_primitiveType, textureUsage.Length * 3 ?? _indices.Length, DrawElementsType.UnsignedInt, current * sizeof(uint));
+            current += textureUsage.Length*3 ?? 0;
         }
         
         var length = _indices.Length;

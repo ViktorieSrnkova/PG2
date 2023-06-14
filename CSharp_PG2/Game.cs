@@ -107,12 +107,16 @@ class Game : GameWindow
 
     private int fps = 0;
 
+    private int _up = 1;
+
+    private Vector3 _lightPosition = new Vector3(0, 0.5f, 0);
+
     private readonly float[] _groundVertices =
     {
-        -10.0f, 0.0f, -10.0f, 0, 0, 0, 0.0f, 0.0f,
-        -10.0f, 0.0f, 10.0f, 0, 0, 0, 0.0f, 10.0f,
-        10.0f, 0.0f, 10.0f, 0, 0, 0, 10.0f, 10.0f,
-        10.0f, 0.0f, -10.0f, 0, 0, 0, 10.0f, 0.0f
+        -10.0f, 0.0f, -10.0f, 0, 0, 1, 0.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f, 0, 0, 1, 0.0f, 10.0f,
+        10.0f, 0.0f, 10.0f, 0, 0, 1, 10.0f, 10.0f,
+        10.0f, 0.0f, -10.0f, 0, 0, 1, 10.0f, 0.0f
     };
 
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
@@ -147,7 +151,15 @@ class Game : GameWindow
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
 
+        var lightColor = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+        var lightPosition = new Vector3(0.5f, 0.5f, 0.5f);
+        var lightModel = Matrix4.CreateTranslation(lightPosition);
+        
+        
         _shader = new Shader("../../../Shaders/default/shader.vert", "../../../Shaders/default/shader.frag");
+        _shader.SetVector4("lightColor", lightColor);
+        
+        // _shader.SetMatrix4("model", lightModel);
 
         var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
         _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
@@ -205,9 +217,12 @@ class Game : GameWindow
 
         var viewMatrix = _camera.GetViewMatrix();
         _ground.Draw(_model, viewMatrix, _projection);
+        _shader.SetVector3("camPos", _camera.Position);
+
+        _shader.SetVector3("lightPos", _lightPosition);
         foreach (var figure in _figures)
         {
-            figure.Value.Draw(_camera.GetViewMatrix(), _projection);
+            figure.Value.Draw(_camera, _projection);
         }
 
         var position = _camera.Position;
@@ -217,6 +232,13 @@ class Game : GameWindow
         _frameCount++;
         if (this._timer.ElapsedMilliseconds >= 1000)
         {
+            if (_lightPosition.Y > 10 || _lightPosition.Y < 0)
+            {
+                _up *= -1;
+            }
+            
+            _lightPosition.Y += 0.5f * _up;
+            
             fps = _frameCount;
             this.Title =
                 $"FPS: {this._frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
@@ -247,7 +269,8 @@ class Game : GameWindow
             { "Z", z },
             { "FPS", fps.ToString() },
             { "VSync", Context.SwapInterval == 1 ? "On" : "Off" },
-            { "Objects", String.Join(", ", names.ToArray()) }
+            { "Objects", String.Join(", ", names.ToArray()) },
+            { "Light", _lightPosition.ToString()}
         };
 
         return info;

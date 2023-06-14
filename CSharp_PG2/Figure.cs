@@ -15,9 +15,9 @@ public class Figure : IDisposable
         Move(position);
     }
     
-    public void Draw(Matrix4 view, Matrix4 projection)
+    public void Draw(Camera camera, Matrix4 projection)
     {
-        _mesh.Draw(_model, view, projection);
+        _mesh.Draw(_model, camera.GetViewMatrix(), projection);
     }
     
     public void Move(Vector3 position)
