@@ -55,40 +55,40 @@ class Game : GameWindow
         //COORDINATES//         //normals                         //poz
         
         //front face
-        -0.1f + 1, -0.1f + 1, -0.1f + 1,    0.0f, 0.0f, -1.0f,      0.0f, 0.0f,
-         0.1f + 1, -0.1f + 1, -0.1f + 1,    0.0f, 0.0f, -1.0f,      1.0f, 0.0f,
-         0.1f + 1,  0.1f + 1, -0.1f + 1,    0.0f, 0.0f, -1.0f,      1.0f, 1.0f,
-        -0.1f + 1,  0.1f + 1, -0.1f + 1,    0.0f, 0.0f, -1.0f,      0.0f, 1.0f,
+        -0.1f , -0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      0.0f, 0.0f,
+         0.1f , -0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      1.0f, 0.0f,
+         0.1f ,  0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      1.0f, 1.0f,
+        -0.1f ,  0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      0.0f, 1.0f,
         
         //right face
-        0.1f + 1, -0.1f + 1, -0.1f + 1,    1.0f, 0.0f, 0.0f,      0.0f, 0.0f,
-        0.1f + 1, -0.1f + 1,  0.1f + 1,    1.0f, 0.0f, 0.0f,      1.0f, 0.0f,
-        0.1f + 1,  0.1f + 1,  0.1f + 1,    1.0f, 0.0f, 0.0f,      1.0f, 1.0f,
-        0.1f + 1,  0.1f + 1, -0.1f + 1,    1.0f, 0.0f, 0.0f,      0.0f, 1.0f,
+        0.1f , -0.1f , -0.1f ,    1.0f, 0.0f, 0.0f,      0.0f, 0.0f,
+        0.1f , -0.1f ,  0.1f ,    1.0f, 0.0f, 0.0f,      1.0f, 0.0f,
+        0.1f ,  0.1f ,  0.1f ,    1.0f, 0.0f, 0.0f,      1.0f, 1.0f,
+        0.1f ,  0.1f , -0.1f ,    1.0f, 0.0f, 0.0f,      0.0f, 1.0f,
         
         //left face
-        -0.1f + 1, -0.1f + 1,  0.1f + 1,    -1.0f, 0.0f, 0.0f,      0.0f, 0.0f,
-        -0.1f + 1, -0.1f + 1, -0.1f + 1,    -1.0f, 0.0f, 0.0f,      1.0f, 0.0f,
-        -0.1f + 1,  0.1f + 1, -0.1f + 1,    -1.0f, 0.0f, 0.0f,      1.0f, 1.0f,
-        -0.1f + 1,  0.1f + 1,  0.1f + 1,    -1.0f, 0.0f, 0.0f,      0.0f, 1.0f,
+        -0.1f , -0.1f ,  0.1f ,    -1.0f, 0.0f, 0.0f,      0.0f, 0.0f,
+        -0.1f , -0.1f , -0.1f ,    -1.0f, 0.0f, 0.0f,      1.0f, 0.0f,
+        -0.1f ,  0.1f , -0.1f ,    -1.0f, 0.0f, 0.0f,      1.0f, 1.0f,
+        -0.1f ,  0.1f ,  0.1f ,    -1.0f, 0.0f, 0.0f,      0.0f, 1.0f,
         
         //bottom face
-        -0.1f + 1, -0.1f + 1,  0.1f + 1,    0.0f, -1.0f, 0.0f,      0.0f, 0.0f,
-         0.1f + 1, -0.1f + 1,  0.1f + 1,    0.0f, -1.0f, 0.0f,      1.0f, 0.0f,
-         0.1f + 1, -0.1f + 1, -0.1f + 1,    0.0f, -1.0f, 0.0f,      1.0f, 1.0f,
-        -0.1f + 1, -0.1f + 1, -0.1f + 1,    0.0f, -1.0f, 0.0f,      0.0f, 1.0f,
+        -0.1f , -0.1f ,  0.1f ,    0.0f, -1.0f, 0.0f,      0.0f, 0.0f,
+         0.1f , -0.1f ,  0.1f ,    0.0f, -1.0f, 0.0f,      1.0f, 0.0f,
+         0.1f , -0.1f , -0.1f ,    0.0f, -1.0f, 0.0f,      1.0f, 1.0f,
+        -0.1f , -0.1f , -0.1f ,    0.0f, -1.0f, 0.0f,      0.0f, 1.0f,
         
         //top face
-        -0.1f + 1, 0.1f + 1, -0.1f + 1,    0.0f, 1.0f, 0.0f,      0.0f, 0.0f,
-         0.1f + 1, 0.1f + 1, -0.1f + 1,    0.0f, 1.0f, 0.0f,      1.0f, 0.0f,
-         0.1f + 1, 0.1f + 1,  0.1f + 1,    0.0f, 1.0f, 0.0f,      1.0f, 1.0f,
-        -0.1f + 1, 0.1f + 1,  0.1f + 1,    0.0f, 1.0f, 0.0f,      0.0f, 1.0f,
+        -0.1f , 0.1f , -0.1f ,    0.0f, 1.0f, 0.0f,      0.0f, 0.0f,
+         0.1f , 0.1f , -0.1f ,    0.0f, 1.0f, 0.0f,      1.0f, 0.0f,
+         0.1f , 0.1f ,  0.1f ,    0.0f, 1.0f, 0.0f,      1.0f, 1.0f,
+        -0.1f , 0.1f ,  0.1f ,    0.0f, 1.0f, 0.0f,      0.0f, 1.0f,
         
         //back face
-         0.1f + 1, -0.1f + 1, 0.1f + 1,    0.0f, 0.0f, 1.0f,      0.0f, 0.0f,
-        -0.1f + 1, -0.1f + 1, 0.1f + 1,    0.0f, 0.0f, 1.0f,      1.0f, 0.0f,
-        -0.1f + 1,  0.1f + 1, 0.1f + 1,    0.0f, 0.0f, 1.0f,      1.0f, 1.0f,
-         0.1f + 1,  0.1f + 1, 0.1f + 1,    0.0f, 0.0f, 1.0f,      0.0f, 1.0f,
+         0.1f , -0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      0.0f, 0.0f,
+        -0.1f , -0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      1.0f, 0.0f,
+        -0.1f ,  0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      1.0f, 1.0f,
+         0.1f ,  0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      0.0f, 1.0f,
     };
 
     private readonly uint[] _lightIndices =
@@ -187,18 +187,11 @@ class Game : GameWindow
         if (lightShader == null) {throw new Exception("Unable to load shader 'light'"); }
 
         
-        float time = (float)GLFW.GetTime();
-        var lightColor = new Vector3
-        {
-            X = (float)Math.Sin(time * 2.0),
-            Y = (float)Math.Sin(time * 0.7),
-            Z = (float)Math.Sin(time * 1.3)
-        };
         
         var lightPosition = new Vector3(1.0f, 1.0f, 1.0f);
-        
-        var diffuseColor = lightColor * new Vector3(1f); // decrease the influence
-        var ambientColor = diffuseColor * new Vector3(0.2f); // low influence
+        var lightColor = new Vector3(1.0f, 1.0f, 1.0f)*255;
+        var diffuseColor = lightColor * 0.5f; // decrease the influence
+        var ambientColor = lightColor * 0.2f; // low influence
         // var lightColor = new Vector3(220.0f, 0.0f, 0.0f);
         // var lightModel = Matrix4.CreateTranslation(lightPosition);
 
@@ -219,6 +212,8 @@ class Game : GameWindow
          //_shader.SetMatrix4("model", lightModel);
 
         var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
+        var crateTexture = TextureManager.GetInstance().GetTexture("structures:crate");
+
         _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
         
         _cube = new Mesh(lightShader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
@@ -229,9 +224,9 @@ class Game : GameWindow
         if (obj != null)
         {
             var mesh = obj.GetMesh();
-            // mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = groundTexture});
+            mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
             var diff = new Vector3(5f, 1f, 2f);
-            _figures.Add("ghost", new Figure(mesh, lightPosition - diff));
+            _figures.Add("cube", new Figure(mesh, lightPosition - diff));
         }
         _timer.Start();
         _consoleWriter.Start();
@@ -282,6 +277,7 @@ class Game : GameWindow
         _shader.SetVector3("camPos", _camera.Position);
 
         // random vector3 between 1-2
+        
         _shader.SetVector3("light.position", _lightPosition);
         foreach (var figure in _figures)
         {

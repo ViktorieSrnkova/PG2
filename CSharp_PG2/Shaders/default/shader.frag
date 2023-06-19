@@ -22,11 +22,12 @@ in vec2 texCoord;
 
 uniform Material material;
 uniform Light light;
-uniform vec3 viewPos;
+uniform vec3 camPos;
 uniform sampler2D texture0;
 
 void main()
 {
+    
     // ambient
     vec3 ambient = light.ambient * material.ambient;
 
@@ -37,11 +38,11 @@ void main()
     vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
     // specular
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 viewDir = normalize(camPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = light.specular * (spec * material.specular);
 
-    vec4 result = vec4(ambient + diffuse + specular, 1);
-    FragColor = result;
+    vec4 result = vec4(ambient+diffuse+specular, 1);
+    FragColor = texture(texture0,texCoord)*result;
 } 
