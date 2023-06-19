@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CSharp_PG2.Managers.Object;
 using CSharp_PG2.Managers.Object.Entity;
 using CSharp_PG2.Managers.Texture;
 using NUnit.Framework;
@@ -82,7 +83,8 @@ public static class FaceUtils
                     usages.Add(new TextureUsage
                     {
                         Length = counter,
-                        Texture = TextureManager.GetInstance().GetTexture(currentTexture)
+                        Texture = TextureManager.GetInstance().GetTexture(currentTexture),
+                        Material = face.Material ?? new Material()
                     });
                     counter = 0;
                 }
@@ -96,7 +98,8 @@ public static class FaceUtils
             usages.Add(new TextureUsage
             {
                 Length = counter,
-                Texture = TextureManager.GetInstance().GetTexture(currentTexture)
+                Texture = TextureManager.GetInstance().GetTexture(currentTexture),
+                Material = faces.Last().Material ?? new Material()
             });
         }
 
@@ -114,6 +117,7 @@ public static class FaceUtils
     {
         public int? Length;
         public Texture? Texture;
+        public Material? Material;
     }
     
     public struct VerticesIndices

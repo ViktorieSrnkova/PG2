@@ -80,20 +80,17 @@ public class Mesh : IDisposable
 
         // Texture?.Use(TextureUnit.Texture0);
 
-        var modelLocation = GL.GetUniformLocation(_shader.Handle, "model");
-        GL.UniformMatrix4(modelLocation, false, ref model);
+        _shader.SetMatrix4("model", model);
+        _shader.SetMatrix4("view", view);
+        _shader.SetMatrix4("proj", projection);
 
-        var viewLocation = GL.GetUniformLocation(_shader.Handle, "view");
-        GL.UniformMatrix4(viewLocation, false, ref view);
-
-        var projectionLocation = GL.GetUniformLocation(_shader.Handle, "proj");
-        GL.UniformMatrix4(projectionLocation, false, ref projection);
-        
         GL.BindVertexArray(_vao);
         var current = 0;
         foreach (var textureUsage in TextureUsages)
         {
             textureUsage.Texture?.Use(TextureUnit.Texture0);
+            textureUsage.Material?.SetMaterial(_shader);
+            
             GL.DrawElements((PrimitiveType)_primitiveType, textureUsage.Length * 3 ?? _indices.Length, DrawElementsType.UnsignedInt, current * sizeof(uint));
             current += textureUsage.Length*3 ?? 0;
         }
