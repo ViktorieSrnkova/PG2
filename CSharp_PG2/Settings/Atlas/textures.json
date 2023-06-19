@@ -2,6 +2,7 @@
   "environment:ground": "environment/grass.png",
   "structures:wall": "structures/wall.jpg",
   "structures:wood": "structures/wood.jpeg",
+  "structures:crate": "structures/iron_wood_crate.png",
   "global:missing_texture": "missing.png",
   "Dog_diffuse.jpg": "Dog_diffuse.jpg",
   "tardis/Blue_Wood_diffuse_scale0.jpg": "tardis/Blue_Wood_diffuse_scale0.jpg",

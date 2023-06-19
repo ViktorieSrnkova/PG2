@@ -18,10 +18,10 @@ public class Material
 
     public void SetMaterial(Shader.Entity.Shader shader)
     {
-        shader.SetVector3("material.ambient", new Vector3(1, 0.5f, 0.31f));
-        shader.SetVector3("material.diffuse", new Vector3(1, 0.5f, 0.31f));
-        shader.SetVector3("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
-        shader.SetFloat("material.shininess", 32.0f);
+        shader.SetVector3("material.ambient", AmbientColor);
+        shader.SetVector3("material.diffuse", DiffuseColor);
+        shader.SetVector3("material.specular", SpecularColor);
+        shader.SetFloat("material.shininess", SpecularHighlight);
     }
     
 }
