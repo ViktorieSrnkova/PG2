@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using CSharp_PG2.Managers.Object;
+using CSharp_PG2.Managers.Shader;
 using CSharp_PG2.Managers.Shader.Entity;
 using CSharp_PG2.Managers.Texture;
 using CSharp_PG2.Utils;
@@ -171,31 +172,66 @@ class Game : GameWindow
 
         // Enable depth testing
         GL.Enable(EnableCap.DepthTest);
+        
+        // Transparency
+        // GL.Enable(EnableCap.Blend);
+        // GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+        // Enable face culling
+        // GL.Enable(EnableCap.CullFace);
 
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
 
-        var lightColor = new Vector4(1.0f, 1.0f, 1.5f, 1.0f);
+        var lightShader = ShaderManager.GetInstance().GetShader("light");
+        if (lightShader == null) {throw new Exception("Unable to load shader 'light'"); }
+
+        
+        float time = (float)GLFW.GetTime();
+        var lightColor = new Vector3
+        {
+            X = (float)Math.Sin(time * 2.0),
+            Y = (float)Math.Sin(time * 0.7),
+            Z = (float)Math.Sin(time * 1.3)
+        };
+        
         var lightPosition = new Vector3(1.0f, 1.0f, 1.0f);
-        var lightModel = Matrix4.CreateTranslation(lightPosition);
         
-        
-        _shader = new Shader("../../../Shaders/default/shader.vert", "../../../Shaders/default/shader.frag");
+        var diffuseColor = lightColor * new Vector3(1f); // decrease the influence
+        var ambientColor = diffuseColor * new Vector3(0.2f); // low influence
+        // var lightColor = new Vector3(220.0f, 0.0f, 0.0f);
+        // var lightModel = Matrix4.CreateTranslation(lightPosition);
+
+
+        _shader = ShaderManager.GetInstance().GetShader("default");
+
+        if (_shader == null)
+        {
+            throw new Exception("Unable to load shader");
+        }
+
         _shader.Use();
-        _shader.SetVector4("lightColor", lightColor);
+        _shader.SetVector3("light.ambient", ambientColor);
+        _shader.SetVector3("light.diffuse", diffuseColor);
+        _shader.SetVector3("light.specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetVector3("light.position", _lightPosition);
         
          //_shader.SetMatrix4("model", lightModel);
 
         var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
         _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
-        _cube = new Mesh(_shader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
+        
+        _cube = new Mesh(lightShader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
+        
+        _figures.Add("lightCube", new Figure(_cube, lightPosition));
 
-        var obj = ObjectManager.GetInstance().GetObject("dog");
+        var obj = ObjectManager.GetInstance().GetObject("cube");
         if (obj != null)
         {
             var mesh = obj.GetMesh();
             // mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = groundTexture});
-            _figures.Add("dog", new Figure(mesh, new Vector3(0, 0, 0)));
+            var diff = new Vector3(5f, 1f, 2f);
+            _figures.Add("ghost", new Figure(mesh, lightPosition - diff));
         }
         _timer.Start();
         _consoleWriter.Start();
@@ -242,30 +278,26 @@ class Game : GameWindow
         HandleKeyboardInput(e.Time);
 
         var viewMatrix = _camera.GetViewMatrix();
-        _ground.Draw(_model, viewMatrix, _projection);
-        _cube.Draw(_model,viewMatrix, _projection);
+        //_ground.Draw(_model, viewMatrix, _projection);
         _shader.SetVector3("camPos", _camera.Position);
 
-        _shader.SetVector3("lightPos", _lightPosition);
+        // random vector3 between 1-2
+        _shader.SetVector3("light.position", _lightPosition);
         foreach (var figure in _figures)
         {
             figure.Value.Draw(_camera, _projection);
+            
+            if (figure.Key == "lightCube")
+            {
+                figure.Value.SetPosition(_lightPosition);
+            }
         }
-
-        var position = _camera.Position;
-
+        
         _consoleWriter.SetMessage(GetInfo());
 
         _frameCount++;
         if (this._timer.ElapsedMilliseconds >= 1000)
         {
-            if (_lightPosition.Y > 10 || _lightPosition.Y < 0)
-            {
-                _up *= -1;
-            }
-            
-            _lightPosition.Y += 0.5f * _up;
-            
             fps = _frameCount;
             this.Title =
                 $"FPS: {this._frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
@@ -387,6 +419,26 @@ class Game : GameWindow
         if (KeyboardState.IsKeyDown(Keys.LeftShift))
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Down, (float)deltaTime);
+        }
+        
+        if (KeyboardState.IsKeyDown(Keys.Up))
+        {
+            _lightPosition += new Vector3(0, deltaTime, 0);
+        }
+        
+        if (KeyboardState.IsKeyDown(Keys.Down))
+        {
+            _lightPosition -= new Vector3(0, deltaTime, 0);
+        }
+        
+        if (KeyboardState.IsKeyDown(Keys.Left))
+        {
+            _lightPosition -= new Vector3(deltaTime, 0, 0);
+        }
+        
+        if (KeyboardState.IsKeyDown(Keys.Right))
+        {
+            _lightPosition += new Vector3(deltaTime, 0, 0);
         }
     }
 

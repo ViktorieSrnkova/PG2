@@ -2,5 +2,9 @@
   "default": {
     "vertex": "default/shader.vert",
     "fragment": "default/shader.frag"
+  },
+  "light": {
+    "vertex": "default/shader.vert",
+    "fragment": "default/light.frag"
   }
 }

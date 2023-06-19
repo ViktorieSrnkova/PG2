@@ -71,7 +71,6 @@ public class Shader
     public void SetInt(string name, int data) {
         if (!_uniformLocations.ContainsKey(name))
         {
-            _logger.Warn($"Uniform '{name}' not found");
             return;
         };
         GL.Uniform1(_uniformLocations[name], data);
@@ -80,7 +79,6 @@ public class Shader
     public void SetFloat(string name, float data) {
         if (!_uniformLocations.ContainsKey(name))
         {
-            _logger.Warn($"Uniform '{name}' not found");
             return;
         }
         GL.Uniform1(_uniformLocations[name], data);
@@ -90,7 +88,6 @@ public class Shader
     {
         if (!_uniformLocations.ContainsKey(name))
         {
-            _logger.Warn($"Uniform '{name}' not found");
             return;
         }
         GL.UniformMatrix4(_uniformLocations[name], false, ref data);
@@ -99,7 +96,6 @@ public class Shader
     public void SetVector3(string name, Vector3 data) {
         if (!_uniformLocations.ContainsKey(name))
         {
-            _logger.Warn($"Uniform '{name}' not found");
             return;
         }
         GL.Uniform3(_uniformLocations[name], data);
@@ -108,7 +104,6 @@ public class Shader
     public void SetVector4(string name, Vector4 data) {
         if (!_uniformLocations.ContainsKey(name))
         {
-            _logger.Warn($"Uniform '{name}' not found");
             return;
         }
         GL.Uniform4(_uniformLocations[name], data);

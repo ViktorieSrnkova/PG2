@@ -12,15 +12,15 @@ uniform mat4 proj = mat4(1.0);
 
 out vec2 texCoord;
 out vec3 Normal;
-out vec3 crntPos;
+out vec3 FragPos;
 
 void main(void)
 {
     // Position of vertex is multiplied by model, view and projection matrix
     gl_Position = proj * view * model * vec4(aPosition, 1.0);
-    Normal = mat3(transpose(inverse(model)))* aNormal;
+    Normal = aNormal;//mat3(transpose(inverse(model))) * aNormal;
     // Every position has its own color
     texCoord = aTexCoord;
-    crntPos = vec3(model * vec4(aPosition, 1.0f));
+    FragPos = vec3(model * vec4(aPosition, 1.0f));
   
 }

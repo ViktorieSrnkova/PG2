@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using CSharp_PG2.Managers.Object.Entity;
 using CSharp_PG2.Utils;
 
 namespace CSharp_PG2.Managers.Object.Factory;
