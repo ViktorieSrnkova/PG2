@@ -1,13 +1,27 @@
 # Semestrální práce PG2 2023
 ## Zadání
-- 3D GL (glew), shadery
-- myš (obě osy), klávesnice, fullscreen vs windowed switching
-- multiple moving 3D models, minimálně jeden načítán ze souboru
-- textury
-- lighting model, alespoň 3 světla (1x ambient)
-- správná průhlednost
-- detekce kolizí
+- [x] 3D GL (glew), shadery 
+- [x] myš (obě osy), klávesnice
+- [x] multiple moving 3D models, 
+- [x] minimálně jeden načítán ze souboru
+- [x] textury
 - **❗ NEPOUŽÍVAT GLUT ❗**
+
+## Vojta
+- [ ] fullscreen vs windowed switching
+- [ ] detekce kolizí
+- [ ] správa scény
+- [ ] generování bludiště
+### Možná?
+  - [ ] Particles
+
+## Viky
+- [ ] lighting model, alespoň 3 světla (1x ambient)
+- [ ] správná průhlednost
+- [ ] audio
+- [ ] story board
+
+
 
 ## Dodatečné info
 - pro splnění alespoň 50% požadavků
