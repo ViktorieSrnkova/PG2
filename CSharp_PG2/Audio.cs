@@ -14,11 +14,17 @@ public class Audio : IDisposable
 
     public Audio()
     {
+        
         _device = ALC.OpenDevice(null);
         if (_device != null)
         {
             _context = ALC.CreateContext(_device, (int[])null);
             ALC.MakeContextCurrent(_context);
+            ALError error = AL.GetError();
+            if (error != ALError.NoError)
+            {
+                Console.WriteLine("Failed to create OpenAL context");
+            }
 
             _buffer = AL.GenBuffer();
             _source = AL.GenSource();
@@ -34,13 +40,18 @@ public class Audio : IDisposable
         LoadWave(path, _buffer);
         AL.Source(_source, ALSourcei.Buffer, _buffer);
         AL.Source(_source, ALSourceb.Looping, true);
-        AL.Source(_source, ALSourcef.Gain, 1.0f);
+        AL.Source(_source, ALSourcef.Gain, 0.2f);
         AL.Source(_source, ALSourcef.Pitch, 1.0f);
     }
 
     public void Play()
     {
         AL.SourcePlay(_source);
+        ALError error = AL.GetError();
+        if (error != ALError.NoError)
+        {
+            Console.WriteLine($"OpenAL error: {error}");
+        }
     }
 
     public void Pause()
