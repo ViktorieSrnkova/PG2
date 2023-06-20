@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CSCore" Version="1.2.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="OpenTK" Version="4.7.7" />
+    <PackageReference Include="OpenTK.OpenAL" Version="4.7.7" />
     <PackageReference Include="StbImageSharp" Version="2.27.13" />
   </ItemGroup>
 
@@ -21,6 +23,12 @@
   <ItemGroup>
     <None Remove="Shaders\basic\basic.frag" />
     <None Remove="Shaders\basic\basic.vert" />
+  </ItemGroup>
+
+ 
+
+  <ItemGroup>
+    <Folder Include="Music\" />
   </ItemGroup>
 
 </Project>
