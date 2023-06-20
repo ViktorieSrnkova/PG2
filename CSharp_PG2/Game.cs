@@ -20,6 +20,7 @@ namespace CSharp_PG2;
 
 class Game : GameWindow
 {
+
     private const float FOV = 90;
 
     private readonly float[] _vertices =
@@ -128,6 +129,9 @@ new Vector3(0.0f,0.0f,-3.0f)
     private Mesh _ground;
     private Mesh _pyramid;
     private Mesh _cube;
+    private Mesh _glass_cube;
+    
+    private Audio _audioPlayer;
 
     private readonly uint[] _groundIndices =
     {
@@ -161,7 +165,9 @@ new Vector3(0.0f,0.0f,-3.0f)
     protected override void OnLoad()
     {
         base.OnLoad();
-
+        _audioPlayer = new Audio();
+        _audioPlayer.Load("../../../Music/cv02_wav_07.wav");
+        _audioPlayer.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
 
@@ -181,8 +187,8 @@ new Vector3(0.0f,0.0f,-3.0f)
         GL.Enable(EnableCap.DepthTest);
         
         // Transparency
-        // GL.Enable(EnableCap.Blend);
-        // GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+         GL.Enable(EnableCap.Blend);
+         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
         // Enable face culling
         // GL.Enable(EnableCap.CullFace);
@@ -267,13 +273,13 @@ new Vector3(0.0f,0.0f,-3.0f)
         _ground = new Mesh(_shader, VertexUtils.ConvertToVertices(_groundVertices), _groundIndices, groundTexture);
         
         _cube = new Mesh(lightShader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
+       
         
         _figures.Add("lightCube1", new Figure(_cube, lightColor * _pointLightPositions[0]));
         _figures.Add("lightCube2", new Figure(_cube, lightColor * _pointLightPositions[1]));
         _figures.Add("lightCube3", new Figure(_cube, lightColor * _pointLightPositions[2]));
         _figures.Add("lightCube4", new Figure(_cube, lightColor * _pointLightPositions[3]));
         
-
         var obj = ObjectManager.GetInstance().GetObject("cube");
         if (obj != null)
         {
@@ -297,6 +303,16 @@ new Vector3(0.0f,0.0f,-3.0f)
             mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = groundTexture });
             var diff = new Vector3(0f, 2f, 0f);
             _figures.Add("ground", new Figure(mesh, lightPosition-diff));
+
+
+        }
+        var glass = ObjectManager.GetInstance().GetObject("ghost_shaded");
+        if (glass != null)
+        {
+            var mesh = glass.GetMesh();
+            mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = null });
+            var diff = new Vector3(0f, -1f, 0f);
+            _figures.Add("glass", new Figure(mesh, lightPosition-diff));
 
 
         }
@@ -337,7 +353,11 @@ new Vector3(0.0f,0.0f,-3.0f)
                 break;
         }
     }
-
+    protected override void OnUnload() {
+        
+        _audioPlayer.Dispose();
+        base.OnUnload();
+    }
     protected override void OnRenderFrame(FrameEventArgs e)
     {
         base.OnRenderFrame(e);

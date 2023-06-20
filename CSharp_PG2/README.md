@@ -16,7 +16,8 @@
   - [ ] Particles
 
 ## Viky
-- [ ] lighting model, alespoň 3 světla (1x ambient)
+- [x] lighting model, alespoň 3 světla (1x ambient)
+- [ ] one moving light
 - [ ] správná průhlednost
 - [ ] audio
 - [ ] story board
