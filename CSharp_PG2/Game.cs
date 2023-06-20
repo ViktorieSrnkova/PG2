@@ -166,7 +166,8 @@ new Vector3(0.0f,0.0f,-3.0f)
     {
         base.OnLoad();
         _audioPlayer = new Audio();
-        _audioPlayer.Load("../../../Music/cv02_wav_07.wav");
+        _audioPlayer.Load("../../../Music/zia3f-wub88.wav");
+        
         _audioPlayer.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
