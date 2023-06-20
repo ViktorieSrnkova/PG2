@@ -16,7 +16,7 @@ public class Camera
     }
 
     public Vector3 Position { get; set; }
-    private Vector3 _front;
+    public Vector3 Front;
     private Vector3 _right;
     private Vector3 _up;
 
@@ -36,7 +36,7 @@ public class Camera
 
     public Matrix4 GetViewMatrix()
     {
-        return Matrix4.LookAt(Position, Position + _front, _up);
+        return Matrix4.LookAt(Position, Position + Front, _up);
     }
 
     public Vector3 ProcessInput(Direction direction, float deltaTime)
@@ -45,8 +45,8 @@ public class Camera
 
         return direction switch
         {
-            Direction.Forward => _front * velocity,
-            Direction.Backward => -_front * velocity,
+            Direction.Forward => Front * velocity,
+            Direction.Backward => -Front * velocity,
             Direction.Left => -_right * velocity,
             Direction.Right => _right * velocity,
             Direction.Up => _up * velocity,
@@ -92,9 +92,9 @@ public class Camera
         front.Z = (float)(MathHelper.Sin(MathHelper.DegreesToRadians(_yaw)) *
                           MathHelper.Cos(MathHelper.DegreesToRadians(_pitch)));
 
-        _front = Vector3.Normalize(front);
-        _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
-        _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+        Front = Vector3.Normalize(front);
+        _right = Vector3.Normalize(Vector3.Cross(Front, Vector3.UnitY));
+        _up = Vector3.Normalize(Vector3.Cross(_right, Front));
     }
 }
 }

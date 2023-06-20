@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using CSharp_PG2.Managers.Object;
 using CSharp_PG2.Managers.Shader;
@@ -35,72 +36,78 @@ class Game : GameWindow
 
     private readonly uint[] _indices =
     {
-        5,3,1,
-        3,8,4,
-        7,6,8,
-        2,8,6,
-        1,4,2,
-        5,2,6,
-        5,7,3,
-        3,7,8,
-        7,5,6,
-        2,4,8,
-        1,3,4,
-        5,1,2
-        
+        5, 3, 1,
+        3, 8, 4,
+        7, 6, 8,
+        2, 8, 6,
+        1, 4, 2,
+        5, 2, 6,
+        5, 7, 3,
+        3, 7, 8,
+        7, 5, 6,
+        2, 4, 8,
+        1, 3, 4,
+        5, 1, 2
+
     };
 
     private readonly float[] _lightVertices =
     {
         //COORDINATES//         //normals                         //poz
-        
+
         //front face
-        -0.1f , -0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      0.0f, 0.0f,
-         0.1f , -0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      1.0f, 0.0f,
-         0.1f ,  0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      1.0f, 1.0f,
-        -0.1f ,  0.1f , -0.1f ,    0.0f, 0.0f, -1.0f,      0.0f, 1.0f,
-        
+        -0.1f, -0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+        0.1f, -0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+        0.1f, 0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+        -0.1f, 0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+
         //right face
-        0.1f , -0.1f , -0.1f ,    1.0f, 0.0f, 0.0f,      0.0f, 0.0f,
-        0.1f , -0.1f ,  0.1f ,    1.0f, 0.0f, 0.0f,      1.0f, 0.0f,
-        0.1f ,  0.1f ,  0.1f ,    1.0f, 0.0f, 0.0f,      1.0f, 1.0f,
-        0.1f ,  0.1f , -0.1f ,    1.0f, 0.0f, 0.0f,      0.0f, 1.0f,
-        
+        0.1f, -0.1f, -0.1f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.1f, -0.1f, 0.1f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        0.1f, 0.1f, 0.1f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        0.1f, 0.1f, -0.1f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+
         //left face
-        -0.1f , -0.1f ,  0.1f ,    -1.0f, 0.0f, 0.0f,      0.0f, 0.0f,
-        -0.1f , -0.1f , -0.1f ,    -1.0f, 0.0f, 0.0f,      1.0f, 0.0f,
-        -0.1f ,  0.1f , -0.1f ,    -1.0f, 0.0f, 0.0f,      1.0f, 1.0f,
-        -0.1f ,  0.1f ,  0.1f ,    -1.0f, 0.0f, 0.0f,      0.0f, 1.0f,
-        
+        -0.1f, -0.1f, 0.1f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -0.1f, -0.1f, -0.1f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        -0.1f, 0.1f, -0.1f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        -0.1f, 0.1f, 0.1f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+
         //bottom face
-        -0.1f , -0.1f ,  0.1f ,    0.0f, -1.0f, 0.0f,      0.0f, 0.0f,
-         0.1f , -0.1f ,  0.1f ,    0.0f, -1.0f, 0.0f,      1.0f, 0.0f,
-         0.1f , -0.1f , -0.1f ,    0.0f, -1.0f, 0.0f,      1.0f, 1.0f,
-        -0.1f , -0.1f , -0.1f ,    0.0f, -1.0f, 0.0f,      0.0f, 1.0f,
-        
+        -0.1f, -0.1f, 0.1f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        0.1f, -0.1f, 0.1f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        0.1f, -0.1f, -0.1f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+        -0.1f, -0.1f, -0.1f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+
         //top face
-        -0.1f , 0.1f , -0.1f ,    0.0f, 1.0f, 0.0f,      0.0f, 0.0f,
-         0.1f , 0.1f , -0.1f ,    0.0f, 1.0f, 0.0f,      1.0f, 0.0f,
-         0.1f , 0.1f ,  0.1f ,    0.0f, 1.0f, 0.0f,      1.0f, 1.0f,
-        -0.1f , 0.1f ,  0.1f ,    0.0f, 1.0f, 0.0f,      0.0f, 1.0f,
-        
+        -0.1f, 0.1f, -0.1f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.1f, 0.1f, -0.1f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        0.1f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+        -0.1f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+
         //back face
-         0.1f , -0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      0.0f, 0.0f,
-        -0.1f , -0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      1.0f, 0.0f,
-        -0.1f ,  0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      1.0f, 1.0f,
-         0.1f ,  0.1f , 0.1f ,    0.0f, 0.0f, 1.0f,      0.0f, 1.0f,
+        0.1f, -0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.1f, -0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        -0.1f, 0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        0.1f, 0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
     };
 
     private readonly uint[] _lightIndices =
     {
-        0, 1, 2, 2, 3, 0,     // Front face
-        4, 5, 6, 6, 7, 4,     // Right face
-        8, 9, 10, 10, 11, 8,  // Left face
-        12, 13, 14, 14, 15, 12,  // Bottom face
-        16, 17, 18, 18, 19, 16,  // Top face
-        20, 21, 22, 22, 23, 20,  // Back face
+        0, 1, 2, 2, 3, 0, // Front face
+        4, 5, 6, 6, 7, 4, // Right face
+        8, 9, 10, 10, 11, 8, // Left face
+        12, 13, 14, 14, 15, 12, // Bottom face
+        16, 17, 18, 18, 19, 16, // Top face
+        20, 21, 22, 22, 23, 20, // Back face
     };
-
+    
+private Vector3[] _pointLightPositions= {
+new Vector3(0.7f,0.2f,2.0f),
+new Vector3(2.3f,-0.3f,-4.0f),
+new Vector3(-4.0f,0.3f,-6.0f),
+new Vector3(0.0f,0.0f,-3.0f)
+};
 
     private bool _mouseGrabbed = false;
     private Matrix4 _projection;
@@ -189,9 +196,9 @@ class Game : GameWindow
         
         
         var lightPosition = new Vector3(1.0f, 1.0f, 1.0f);
-        var lightColor = new Vector3(1.0f, 1.0f, 1.0f)*255;
-        var diffuseColor = lightColor * 0.5f; // decrease the influence
-        var ambientColor = lightColor * 0.2f; // low influence
+        var lightColor = new Vector3(1.0f, 1.0f, 1.0f);
+        var diffuseColor = lightColor * 0.8f; // decrease the influence
+        var ambientColor = lightColor * 0.8f; // low influence
         // var lightColor = new Vector3(220.0f, 0.0f, 0.0f);
         // var lightModel = Matrix4.CreateTranslation(lightPosition);
 
@@ -204,11 +211,54 @@ class Game : GameWindow
         }
 
         _shader.Use();
-        _shader.SetVector3("light.ambient", ambientColor);
-        _shader.SetVector3("light.diffuse", diffuseColor);
-        _shader.SetVector3("light.specular", new Vector3(1.0f, 1.0f, 1.0f));
-        _shader.SetVector3("light.position", _lightPosition);
+        _shader.SetVector3("dirLight.direction", new Vector3(-0.2f, -1.0f, -0.3f));
+        _shader.SetVector3("dirLight.ambient", new Vector3(0.05f, 0.05f, 0.05f));
+        _shader.SetVector3("dirLight.diffuse", new Vector3(0.4f, 0.4f, 0.4f));
+        _shader.SetVector3("dirLight.specular", new Vector3(0.5f, 0.5f, 0.5f));
         
+        _shader.SetVector3("pointLights[0].position", _pointLightPositions[0]);
+        _shader.SetVector3("pointLights[0].ambient", new Vector3(0.05f, 0.05f, 0.05f));
+        _shader.SetVector3("pointLights[0].diffuse", new Vector3(1.8f, 0.8f, 0.8f));
+        _shader.SetVector3("pointLights[0].specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetFloat("pointLights[0].constant", 1.0f);
+        _shader.SetFloat("pointLights[0].linear", 0.09f);
+        _shader.SetFloat("pointLights[0].quadratic", 0.032f);
+     
+        _shader.SetVector3("pointLights[1].position", _pointLightPositions[1]);
+        _shader.SetVector3("pointLights[1].ambient", new Vector3(0.05f, 0.05f, 0.05f));
+        _shader.SetVector3("pointLights[1].diffuse", new Vector3(0.8f, 1.8f, 0.8f));
+        _shader.SetVector3("pointLights[1].specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetFloat("pointLights[1].constant", 1.0f);
+        _shader.SetFloat("pointLights[1].linear", 0.09f);
+        _shader.SetFloat("pointLights[1].quadratic", 0.032f);
+
+        _shader.SetVector3("pointLights[2].position", _pointLightPositions[2]);
+        _shader.SetVector3("pointLights[2].ambient", new Vector3(0.05f, 0.05f, 0.05f));
+        _shader.SetVector3("pointLights[2].diffuse", new Vector3(0.8f, 0.8f, 1.8f));
+        _shader.SetVector3("pointLights[2].specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetFloat("pointLights[2].constant", 1.0f);
+        _shader.SetFloat("pointLights[2].linear", 0.09f);
+        _shader.SetFloat("pointLights[2].quadratic", 0.032f);
+        
+        _shader.SetVector3("pointLights[3].position", _pointLightPositions[3]);
+        _shader.SetVector3("pointLights[3].ambient", new Vector3(0.05f, 0.05f, 0.05f));
+        _shader.SetVector3("pointLights[3].diffuse", new Vector3(0.8f, 0.8f, 0.8f));
+        _shader.SetVector3("pointLights[3].specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetFloat("pointLights[3].constant", 1.0f);
+        _shader.SetFloat("pointLights[3].linear", 0.09f);
+        _shader.SetFloat("pointLights[3].quadratic", 0.032f);
+        
+        _shader.SetVector3("spotLight.position", _camera.Position);
+        _shader.SetVector3("spotLight.direction", _camera.Front);
+        _shader.SetVector3("spotLight.ambient", new Vector3(0.0f, 0.0f, 0.0f));
+        _shader.SetVector3("spotLight.diffuse", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetVector3("spotLight.specular", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetFloat("spotLight.constant", 1.0f);
+        _shader.SetFloat("spotLight.linear", 0.09f);
+        _shader.SetFloat("spotLight.quadratic", 0.032f);
+        _shader.SetFloat("spotLight.cutOff", (float)Math.Cos(MathHelper.DegreesToRadians(12.5f)));
+        _shader.SetFloat("spotLight.outerCutOff", (float)Math.Cos(MathHelper.DegreesToRadians(17.5f)));
+        _shader.SetVector3("camPos", _camera.Position);
          //_shader.SetMatrix4("model", lightModel);
 
         var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
@@ -218,16 +268,39 @@ class Game : GameWindow
         
         _cube = new Mesh(lightShader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
         
-        _figures.Add("lightCube", new Figure(_cube, lightPosition));
+        _figures.Add("lightCube1", new Figure(_cube, lightColor * _pointLightPositions[0]));
+        _figures.Add("lightCube2", new Figure(_cube, lightColor * _pointLightPositions[1]));
+        _figures.Add("lightCube3", new Figure(_cube, lightColor * _pointLightPositions[2]));
+        _figures.Add("lightCube4", new Figure(_cube, lightColor * _pointLightPositions[3]));
+        
 
         var obj = ObjectManager.GetInstance().GetObject("cube");
         if (obj != null)
         {
             var mesh = obj.GetMesh();
             mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
-            var diff = new Vector3(5f, 1f, 2f);
+            var diff = new Vector3(-4f, -1.1f, -5f);
+            var diff2=new Vector3(-4f, -1.1f, 5f);
+            var diff3=new Vector3(4f, -1.1f, 5f);
+            var diff4=new Vector3(4f, -1.1f, -5f);
             _figures.Add("cube", new Figure(mesh, lightPosition - diff));
+            _figures.Add("cube2", new Figure(mesh, lightPosition - diff2));
+            _figures.Add("cube3", new Figure(mesh, lightPosition - diff3));
+            _figures.Add("cube4", new Figure(mesh, lightPosition - diff4));
+            
+            
         }
+        var grnd = ObjectManager.GetInstance().GetObject("ground");
+        if (grnd != null)
+        {
+            var mesh = grnd.GetMesh();
+            mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = groundTexture });
+            var diff = new Vector3(0f, 2f, 0f);
+            _figures.Add("ground", new Figure(mesh, lightPosition-diff));
+
+
+        }
+
         _timer.Start();
         _consoleWriter.Start();
 
@@ -275,6 +348,7 @@ class Game : GameWindow
         var viewMatrix = _camera.GetViewMatrix();
         //_ground.Draw(_model, viewMatrix, _projection);
         _shader.SetVector3("camPos", _camera.Position);
+        _shader.SetVector3("spotLight.direction", _camera.Front);
 
         // random vector3 between 1-2
         

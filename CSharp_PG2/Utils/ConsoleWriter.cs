@@ -70,6 +70,7 @@ public class ConsoleWriter
     private string PadWithSpace(string s, int add = 0)
     {
         var diff = Console.WindowWidth - s.Length + add;
+        if (diff < 0) diff = 0;
         return s + new string(' ', diff);
     }
     

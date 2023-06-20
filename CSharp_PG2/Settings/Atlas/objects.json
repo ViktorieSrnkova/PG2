@@ -1,5 +1,6 @@
 {
   "cube": "cube_alt",
   "tardis": "tardis",
-  "ghost": "ghost_shaded"
+  "ghost": "ghost_shaded",
+  "ground": "ground"
 }
