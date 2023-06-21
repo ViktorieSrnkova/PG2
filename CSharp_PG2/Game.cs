@@ -197,8 +197,8 @@ new Vector3(0.0f,0.0f,-3.0f)
         GL.Enable(EnableCap.DepthTest);
         
         // Transparency
-         GL.Enable(EnableCap.Blend);
-         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+         //GL.Enable(EnableCap.Blend);
+         //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
         // Enable face culling
         // GL.Enable(EnableCap.CullFace);
@@ -226,7 +226,7 @@ new Vector3(0.0f,0.0f,-3.0f)
             throw new Exception("Unable to load shader");
         }
 
-        var ambientColore = lightColor * _ambientIntensity;
+        var flashLightIntensity = lightColor * _ambientIntensity;
         _shader.Use();
         _shader.SetVector3("dirLight.direction", new Vector3(-0.2f, -1.0f, -0.3f));
         _shader.SetVector3("dirLight.ambient", new Vector3(0.1f, 0.1f, 0.1f));
@@ -268,7 +268,7 @@ new Vector3(0.0f,0.0f,-3.0f)
         _shader.SetVector3("spotLight.position", _camera.Position);
         _shader.SetVector3("spotLight.direction", _camera.Front);
         _shader.SetVector3("spotLight.ambient", new Vector3(0.0f, 0.0f, 0.0f));
-        _shader.SetVector3("spotLight.diffuse", ambientColore);
+        _shader.SetVector3("spotLight.diffuse", flashLightIntensity);
         _shader.SetVector3("spotLight.specular", new Vector3(1.0f, 1.0f, 1.0f));
         _shader.SetFloat("spotLight.constant", 1.0f);
         _shader.SetFloat("spotLight.linear", 0.09f);
@@ -291,11 +291,11 @@ new Vector3(0.0f,0.0f,-3.0f)
         _figures.Add("lightCube3", new Figure(_cube, lightColor * _pointLightPositions[2]));
         _figures.Add("lightCube4", new Figure(_cube, lightColor * _pointLightPositions[3]));
         
-        var obj = ObjectManager.GetInstance().GetObject("cube");
+        var obj = ObjectManager.GetInstance().GetObject("ghost_shaded");
         if (obj != null)
         {
             var mesh = obj.GetMesh();
-            mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
+           // mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
             var diff = new Vector3(-4f, -1.1f, -5f);
             var diff2=new Vector3(-4f, -1.1f, 5f);
             var diff3=new Vector3(4f, -1.1f, 5f);
@@ -321,7 +321,7 @@ new Vector3(0.0f,0.0f,-3.0f)
         if (glass != null)
         {
             var mesh = glass.GetMesh();
-            mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = null });
+            mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = groundTexture });
             var diff = new Vector3(0f, -1f, 0f);
             _figures.Add("glass", new Figure(mesh, lightPosition-diff));
 
