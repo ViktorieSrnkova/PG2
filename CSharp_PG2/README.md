@@ -19,7 +19,7 @@
 - [x] lighting model, alespoň 3 světla (1x ambient)
 - [ ] one moving light
 - [x] audio
-- [ ] story board
+- [x] story board
 - [x] fullscreen vs windowed switching
 ### Možná?
 - [ ] Particles

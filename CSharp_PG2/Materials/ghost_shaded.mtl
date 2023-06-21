@@ -1,13 +1,13 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'ghost_shaded.blend'
 # Material Count: 1
 
 newmtl Ghost
 Ns 323.999994
-Ka 220.000000 0.000000 220.000000
+Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
-map_Kd Dog_diffuse.jpg
 illum 2
+map_Kd Ghost.png
