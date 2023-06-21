@@ -8,7 +8,7 @@
 - **❗ NEPOUŽÍVAT GLUT ❗**
 
 ## Vojta
-- [ ] fullscreen vs windowed switching
+- [ ] správná průhlednost
 - [ ] detekce kolizí
 - [ ] správa scény
 - [ ] generování bludiště
@@ -18,10 +18,11 @@
 ## Viky
 - [x] lighting model, alespoň 3 světla (1x ambient)
 - [ ] one moving light
-- [ ] správná průhlednost
 - [ ] audio
 - [ ] story board
-
+- [ ] fullscreen vs windowed switching
+### Možná?
+- [ ] Particles
 
 
 ## Dodatečné info
