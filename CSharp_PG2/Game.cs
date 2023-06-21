@@ -120,6 +120,7 @@ new Vector3(0.0f,0.0f,-3.0f)
 
     private int _frameCount;
     private Stopwatch _timer = new Stopwatch();
+    private double _previousTime;
 
     private Dictionary<String, Figure> _figures = new Dictionary<string, Figure>();
 
@@ -149,7 +150,7 @@ new Vector3(0.0f,0.0f,-3.0f)
     private int _up = 1;
 
     private Vector3 _lightPosition = new Vector3(0, 0.5f, 0);
-
+    private float _ambientIntensity = 0.8f;
     private readonly float[] _groundVertices =
     {
         -10.0f, 0.0f, -10.0f, 0, 0, 1, 0.0f, 0.0f,
@@ -174,7 +175,8 @@ new Vector3(0.0f,0.0f,-3.0f)
     protected override void OnLoad()
     {
         base.OnLoad();
-        
+        _timer.Start();
+        _previousTime = _timer.Elapsed.TotalSeconds;
         _backgroundAudio.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
@@ -224,9 +226,10 @@ new Vector3(0.0f,0.0f,-3.0f)
             throw new Exception("Unable to load shader");
         }
 
+        var ambientColore = lightColor * _ambientIntensity;
         _shader.Use();
         _shader.SetVector3("dirLight.direction", new Vector3(-0.2f, -1.0f, -0.3f));
-        _shader.SetVector3("dirLight.ambient", new Vector3(0.05f, 0.05f, 0.05f));
+        _shader.SetVector3("dirLight.ambient", new Vector3(0.1f, 0.1f, 0.1f));
         _shader.SetVector3("dirLight.diffuse", new Vector3(0.4f, 0.4f, 0.4f));
         _shader.SetVector3("dirLight.specular", new Vector3(0.5f, 0.5f, 0.5f));
         
@@ -265,7 +268,7 @@ new Vector3(0.0f,0.0f,-3.0f)
         _shader.SetVector3("spotLight.position", _camera.Position);
         _shader.SetVector3("spotLight.direction", _camera.Front);
         _shader.SetVector3("spotLight.ambient", new Vector3(0.0f, 0.0f, 0.0f));
-        _shader.SetVector3("spotLight.diffuse", new Vector3(1.0f, 1.0f, 1.0f));
+        _shader.SetVector3("spotLight.diffuse", ambientColore);
         _shader.SetVector3("spotLight.specular", new Vector3(1.0f, 1.0f, 1.0f));
         _shader.SetFloat("spotLight.constant", 1.0f);
         _shader.SetFloat("spotLight.linear", 0.09f);
@@ -359,6 +362,9 @@ new Vector3(0.0f,0.0f,-3.0f)
                 // center camera
                 _camera.Position = new Vector3(0, 0, 3);
                 break;
+            case Keys.F:
+                WindowState = WindowState == WindowState.Fullscreen ? WindowState.Normal : WindowState.Fullscreen;
+                break;
         }
         if (e.Key == Keys.W || e.Key == Keys.A || e.Key == Keys.S || e.Key == Keys.D)
         {
@@ -388,9 +394,16 @@ new Vector3(0.0f,0.0f,-3.0f)
         base.OnRenderFrame(e);
         //ALC.MakeContextCurrent(_backgroundAudio.Context); -- this makes the background play but sped up+ footsteps also sped up
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-        HandleKeyboardInput(e.Time);
-
+        
+        double currentTime = _timer.Elapsed.TotalSeconds; //stopwatch se resetuje 
+        double res = currentTime - _previousTime;
+        if (res < 0)
+        {
+            res += 1;
+        }
+        HandleKeyboardInput(res);
+        _previousTime = currentTime;
+        
         var viewMatrix = _camera.GetViewMatrix();
         //_ground.Draw(_model, viewMatrix, _projection);
         _shader.SetVector3("camPos", _camera.Position);
@@ -501,10 +514,35 @@ new Vector3(0.0f,0.0f,-3.0f)
 
         _lastMousePosition = MouseState.Position;
     }
-
-    private void HandleKeyboardInput(double currentTime)
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
-        var deltaTime = 0.001f;
+        base.OnMouseWheel(e);
+    
+        // Adjust the ambient intensity based on the scroll direction
+        if (e.OffsetY > 0)
+        {
+            // Scroll up, increase intensity
+            _ambientIntensity += 0.1f;
+            if (_ambientIntensity > 1.0f)
+                _ambientIntensity = 1.0f;
+        }
+        else
+        {
+            // Scroll down, decrease intensity
+            _ambientIntensity -= 0.1f;
+            if (_ambientIntensity < 0.0f)
+                _ambientIntensity = 0.0f;
+        }
+    
+        // Update the ambient color with the new intensity
+        var ambientColore = new Vector3(1f,1f,1f) * _ambientIntensity;
+        _shader.SetVector3("spotLight.diffuse", ambientColore);
+    }
+
+    private void HandleKeyboardInput(double deltaTime)
+    {
+       
+        
         if (KeyboardState.IsKeyDown(Keys.W))
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Forward, (float)deltaTime);
@@ -537,23 +575,24 @@ new Vector3(0.0f,0.0f,-3.0f)
         
         if (KeyboardState.IsKeyDown(Keys.Up))
         {
-            _lightPosition += new Vector3(0, deltaTime, 0);
+            _lightPosition += new Vector3(0, (float)deltaTime, 0);
         }
         
         if (KeyboardState.IsKeyDown(Keys.Down))
         {
-            _lightPosition -= new Vector3(0, deltaTime, 0);
+            _lightPosition -= new Vector3(0, (float)deltaTime, 0);
         }
         
         if (KeyboardState.IsKeyDown(Keys.Left))
         {
-            _lightPosition -= new Vector3(deltaTime, 0, 0);
+            _lightPosition -= new Vector3((float)deltaTime, 0, 0);
         }
         
         if (KeyboardState.IsKeyDown(Keys.Right))
         {
-            _lightPosition += new Vector3(deltaTime, 0, 0);
+            _lightPosition += new Vector3((float)deltaTime, 0, 0);
         }
+     
     }
 
     private void UpdateProjectionMatrix(ResizeEventArgs e)

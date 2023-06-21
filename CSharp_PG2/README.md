@@ -18,9 +18,9 @@
 ## Viky
 - [x] lighting model, alespoň 3 světla (1x ambient)
 - [ ] one moving light
-- [ ] audio
+- [x] audio
 - [ ] story board
-- [ ] fullscreen vs windowed switching
+- [x] fullscreen vs windowed switching
 ### Možná?
 - [ ] Particles
 
