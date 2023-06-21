@@ -6,5 +6,9 @@
   "light": {
     "vertex": "default/shader.vert",
     "fragment": "default/light.frag"
+  },
+  "bounding": {
+    "vertex": "default/shader.vert",
+    "fragment": "default/bounding.frag"
   }
 }

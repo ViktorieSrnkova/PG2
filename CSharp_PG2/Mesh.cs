@@ -19,7 +19,7 @@ public class Mesh : IDisposable
     private readonly int _vao, _vbo, _ebo;
 
     private readonly Shader _shader;
-    private readonly Vertex[] _vertices;
+    private Vertex[] _vertices;
     private readonly uint[] _indices;
     private readonly int _primitiveType;
     public List<FaceUtils.TextureUsage> TextureUsages { get; set; } = new List<FaceUtils.TextureUsage>();
@@ -35,6 +35,10 @@ public class Mesh : IDisposable
         if (texture != null)
         {
             TextureUsages.Add(new FaceUtils.TextureUsage{Texture = texture});
+        }
+        else
+        {
+            TextureUsages.Add(new FaceUtils.TextureUsage());
         }
 
         // Generate VAO, VBO, EBO
@@ -100,6 +104,26 @@ public class Mesh : IDisposable
         GL.BindVertexArray(0);
     }
 
+    public Vertex[] GetVertices()
+    {
+        return _vertices;
+    }
+
+    public void SetVertices(Vertex[] vertices)
+    {
+        _vertices = vertices;
+    }
+    
+    public uint[] GetIndices()
+    {
+        return _indices;
+    }
+    
+    public Shader GetShader()
+    {
+        return _shader;
+    }
+    
     public void Dispose()
     {
         GL.DeleteVertexArray(_vao);
