@@ -5,6 +5,7 @@
   "structures:crate": "structures/iron_wood_crate.png",
   "global:missing_texture": "missing.png",
   "Dog_diffuse.jpg": "Dog_diffuse.jpg",
+  "Ghost.png": "structures/Ghost.png",
   "tardis/Blue_Wood_diffuse_scale0.jpg": "tardis/Blue_Wood_diffuse_scale0.jpg",
   "tardis/Blue_Wood_specularGlossiness_gloss.jpg": "tardis/Blue_Wood_specularGlossiness_gloss.jpg",
   "tardis/Blue_Wood_specularGlossiness_spec_scale1.jpg": "tardis/Blue_Wood_specularGlossiness_spec_scale1.jpg",
