@@ -291,11 +291,11 @@ new Vector3(0.0f,0.0f,-3.0f)
         _figures.Add("lightCube3", new Figure(_cube, lightColor * _pointLightPositions[2]));
         _figures.Add("lightCube4", new Figure(_cube, lightColor * _pointLightPositions[3]));
         
-        var obj = ObjectManager.GetInstance().GetObject("ghost_shaded");
+        var obj = ObjectManager.GetInstance().GetObject("cube");
         if (obj != null)
         {
             var mesh = obj.GetMesh();
-           // mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
+           mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
             var diff = new Vector3(-4f, -1.1f, -5f);
             var diff2=new Vector3(-4f, -1.1f, 5f);
             var diff3=new Vector3(4f, -1.1f, 5f);
