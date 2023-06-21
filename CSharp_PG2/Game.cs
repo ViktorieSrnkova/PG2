@@ -13,6 +13,7 @@ using CSharp_PG2.Managers.Shader.Entity;
 using CSharp_PG2.Managers.Texture;
 using CSharp_PG2.Utils;
 using Microsoft.VisualBasic;
+using OpenTK.Audio.OpenAL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -131,7 +132,9 @@ new Vector3(0.0f,0.0f,-3.0f)
     private Mesh _cube;
     private Mesh _glass_cube;
     
-    private Audio _audioPlayer;
+    private Audio _backgroundAudio;
+    private Audio _footstepSound;
+    private bool _isFootstepSoundPlaying;
 
     private readonly uint[] _groundIndices =
     {
@@ -160,15 +163,19 @@ new Vector3(0.0f,0.0f,-3.0f)
     {
         _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), 1f, 0.1f, 100f);
         _camera = new Camera(new Vector3(0, 1, -1));
+        _backgroundAudio = new Audio();
+        _backgroundAudio.Load("../../../Music/zia3f-wub88.wav");
+       
+        _footstepSound = new Audio();
+        _footstepSound.Load("../../../Music/duck_feet.wav");
+        _isFootstepSoundPlaying = false;
     }
 
     protected override void OnLoad()
     {
         base.OnLoad();
-        _audioPlayer = new Audio();
-        _audioPlayer.Load("../../../Music/zia3f-wub88.wav");
         
-        _audioPlayer.Play();
+        _backgroundAudio.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
 
@@ -335,7 +342,7 @@ new Vector3(0.0f,0.0f,-3.0f)
     protected override void OnKeyDown(KeyboardKeyEventArgs e)
     {
         base.OnKeyDown(e);
-
+        
         switch (e.Key)
         {
             case Keys.Escape:
@@ -353,15 +360,33 @@ new Vector3(0.0f,0.0f,-3.0f)
                 _camera.Position = new Vector3(0, 0, 3);
                 break;
         }
+        if (e.Key == Keys.W || e.Key == Keys.A || e.Key == Keys.S || e.Key == Keys.D)
+        {
+            if (!_isFootstepSoundPlaying)
+            {
+                _isFootstepSoundPlaying = true;
+                _footstepSound.Play();
+            }
+        }
     }
-    protected override void OnUnload() {
+    protected override void OnKeyUp(KeyboardKeyEventArgs e)
+    {
+        base.OnKeyUp(e);
         
-        _audioPlayer.Dispose();
-        base.OnUnload();
+        if (e.Key == Keys.W || e.Key == Keys.A || e.Key == Keys.S || e.Key == Keys.D)
+        {
+            if (_isFootstepSoundPlaying)
+            {
+                _isFootstepSoundPlaying = false;
+                _footstepSound.Stop();
+            }
+        }
     }
+    
     protected override void OnRenderFrame(FrameEventArgs e)
     {
         base.OnRenderFrame(e);
+        //ALC.MakeContextCurrent(_backgroundAudio.Context); -- this makes the background play but sped up+ footsteps also sped up
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         HandleKeyboardInput(e.Time);
@@ -419,8 +444,6 @@ new Vector3(0.0f,0.0f,-3.0f)
             { "Z", z },
             { "FPS", fps.ToString() },
             { "VSync", Context.SwapInterval == 1 ? "On" : "Off" },
-            { "Objects", String.Join(", ", names.ToArray()) },
-            { "Light", _lightPosition.ToString()}
         };
 
         return info;
@@ -543,5 +566,11 @@ new Vector3(0.0f,0.0f,-3.0f)
             100f // Far clipping plane
         );
         _projection = projectionMatrix;
+    }
+    protected override void OnUnload() {
+        
+        _backgroundAudio.Dispose();
+        _footstepSound.Dispose();
+        base.OnUnload();
     }
 }
