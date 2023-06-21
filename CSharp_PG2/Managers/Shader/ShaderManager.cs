@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CSharp_PG2.Managers.Shader.Factory;
 
@@ -23,7 +24,7 @@ public class ShaderManager
         return _instance ??= new ShaderManager();
     }
     
-    public Shader? GetShader(string name)
+    public Shader GetShader(string name)
     {
         if (_shaders.TryGetValue(name, out var s))
         {
@@ -31,7 +32,7 @@ public class ShaderManager
         }
         
         _logger.Error($"Shader '{name}' not found");
-        return null;
+        throw new Exception($"Shader '{name}' not found");
     }
     
 }

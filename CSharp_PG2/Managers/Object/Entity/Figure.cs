@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CSharp_PG2.Managers.Object.Factory;
 using CSharp_PG2.Managers.Shader;
 using CSharp_PG2.Utils;
 using OpenTK.Mathematics;
@@ -37,7 +38,9 @@ public class Figure
             throw new Exception($"Shader '{Shader}' not found");
         }
         
-        _mesh = new Mesh(shader, item.Vertices, item.Indices);
+        var minMax = BoundingBoxFactory.GetMinMaxPosition(item.Vertices, item.Indices);
+        var vertices = BoundingBoxFactory.GetZeroCenterDiff(minMax, item.Vertices);
+        _mesh = new Mesh(shader, vertices, item.Indices);
         _mesh.TextureUsages = new List<FaceUtils.TextureUsage>(textureUsage);
 
         return _mesh;
