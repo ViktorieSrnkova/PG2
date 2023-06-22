@@ -12,6 +12,8 @@ namespace CSharp_PG2;
 
 public class Figure : IEntity
 {
+    private const bool Debug = false;
+    
     public bool IsCollidable { get; set; } = true;
     public bool IsStatic { get; set; } = false;
     public Vector3 Velocity { get; set; } = Vector3.Zero;
@@ -47,7 +49,7 @@ public class Figure : IEntity
     public virtual void Draw(float deltaTime, Camera camera, Matrix4 projection)
     {
         Mesh?.Draw(_model, camera.GetViewMatrix(), projection);
-
+        if (!Debug) return;
         var boxMesh = BoundingBox.GetMesh();
         var boxShader = boxMesh.GetShader();
         boxShader.Use();

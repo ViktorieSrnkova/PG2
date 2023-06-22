@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using CSharp_PG2.Entities;
+using CSharp_PG2.Entities.Ghost;
 using CSharp_PG2.Entities.ShaderConfigurables;
+using CSharp_PG2.Managers.Maze;
 using CSharp_PG2.Managers.Object;
 using CSharp_PG2.Managers.Shader;
 using CSharp_PG2.Managers.Shader.Entity;
@@ -35,13 +37,13 @@ public class DefaultScene : Scene
         
         AddShaderConfigurable(Spotlight.Name, _spotlight);
         AddShaderConfigurable(DirLight.Name, _dirLight);
-
+        
         var lights = new Vector3[]
         {
-            new Vector3(9f, 0f, 4.01f),
-            new Vector3(-9f, 0f, 4f),
-            new Vector3(6f, 1000f, 3f),
-            new Vector3(-6f, 1000f, 3f)
+            new Vector3(3f, 20f, 3f),
+            new Vector3(-3f, 20f, 3f),
+            new Vector3(3f, 20f, 0f),
+            new Vector3(-3f, 20f, 0f)
         };
 
         for (int i = 0; i < lights.Length; i++)
@@ -51,31 +53,42 @@ public class DefaultScene : Scene
                 i,
                 lights[i],
                 new Vector3(0.05f, 0.05f, 0.05f),
-                new Vector3(1.8f, 0.8f, 0.8f),
+                new Vector3(1f, 0.8f, 0.8f),
                 new Vector3(1, 1, 1)
             );
-            
-            light.Velocity = new Vector3((i%2==0?-1:1)*2, 0, 0);
+
+            light.Velocity = new Vector3(0, 5, 0);
             Figures.Add(light.GetName(), light);
         }
 
-        var cubeMesh = ObjectManager.GetInstance().GetObject("cube").GetMesh();
-        _player = new Figure(cubeMesh, new Vector3(0, 1, 0), "player")
-        {
-            IsStatic = true,
-            IsCollidable = true,
-            Velocity = Vector3.Zero
-        };
-        Figures.Add(_player.GetName(), _player);
+        var ghost = new Ghost("ghost", new Vector3(5,5,5));
+        Figures.Add(ghost.GetName(), ghost);
         
-        var groundMesh = ObjectManager.GetInstance().GetObject("ground").GetMesh();
-        var ground = new Figure(groundMesh, Vector3.Zero, "ground")
+        var ghostCircular = new GhostCircular("ghost_circular", Vector3.Zero, 0, -1, 30);
+        Figures.Add(ghostCircular.GetName(), ghostCircular);
+        
+        var ghostSquare = new GhostSquare("ghost_square", Vector3.Zero);
+        Figures.Add(ghostSquare.GetName(), ghostSquare);
+        
+        var ghostZ = new GhostLineZAxis("ghost_z_axis", new Vector3(5, 0, 3));
+        Figures.Add(ghostZ.GetName(), ghostZ);
+        
+        var ground = new Ground("ground", 500)
         {
             IsStatic = true,
             IsCollidable = true,
             Velocity = Vector3.Zero
         };
         Figures.Add("ground", ground);
+
+        var maze = MazeManager.GetMaze("maze");
+        var mappedMaze = MazeManager.MapMaze(maze, 3);
+        var figures = MazeManager.GetMazeFigures(mappedMaze);
+        
+        foreach (var figure in figures)
+        {
+            Figures.Add(figure.GetName(), figure);
+        }
 
         // var maze = new Maze("Maze");
         // Figures.Add(maze.GetName(), maze);

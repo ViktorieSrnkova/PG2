@@ -37,6 +37,7 @@ public class PointLight : Figure
     private void Setup()
     {
         _mainShader = ShaderManager.GetInstance().GetShader("default");
+        _mainShader.Use();
         
         _mainShader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         _mainShader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
