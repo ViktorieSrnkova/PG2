@@ -7,19 +7,28 @@ using CSharp_PG2.Managers.Collision;
 using CSharp_PG2.Managers.Object;
 using CSharp_PG2.Managers.Shader.Entity;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace CSharp_PG2.Scenes;
 
 public abstract class Scene : IDisposable
 {
-    protected readonly Dictionary<string, Figure> Figures = new();
+    public readonly Dictionary<string, Figure> Figures = new();
 
+    protected Camera Camera;
+    
     private readonly Dictionary<string, List<IEventListener>> _events = new();
     
     private readonly Dictionary<string, IShaderConfigurable> _shaderConfigurables = new();
 
     private readonly CollisionManager _collisionManager = new CollisionManager();
 
+    public Scene(Camera camera)
+    {
+        Camera = camera;
+    }
+    
     public abstract void Setup();
 
     protected abstract Shader GetMainShader();
@@ -39,7 +48,7 @@ public abstract class Scene : IDisposable
         
         foreach (var figure in Figures.Values)
         {
-            figure.Draw(camera, projectionMatrix);
+            figure.Draw(deltaTime, camera, projectionMatrix);
         }
     }
 
@@ -85,5 +94,21 @@ public abstract class Scene : IDisposable
         {
             listener.OnEvent(e);
         }
+    }
+    
+    public virtual void HandleKeyboardInput(KeyboardState state, float deltaTime)
+    {
+    }
+    
+    public virtual void OnMouseWheel(MouseState state, MouseWheelEventArgs e)
+    {
+    }
+    
+    public virtual void OnMouseMove(MouseState state, MouseMoveEventArgs e)
+    {
+    }
+    
+    public virtual void OnKeyDown(KeyboardKeyEventArgs e)
+    {
     }
 }

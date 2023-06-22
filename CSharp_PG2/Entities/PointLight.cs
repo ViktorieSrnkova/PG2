@@ -23,6 +23,8 @@ public class PointLight : Figure
 
     private Shader _mainShader;
 
+    private int _dir = 1;
+
     public PointLight(string name, int index, Mesh mesh, Vector3 position, Vector3 ambient, Vector3 diffuse, Vector3 specular) : base(mesh, position, name)
     {
         _index = index;
@@ -35,7 +37,7 @@ public class PointLight : Figure
     private void Setup()
     {
         _mainShader = ShaderManager.GetInstance().GetShader("default");
-        _mainShader.SetVector3($"pointLights[{_index}].position", Position);
+        
         _mainShader.SetVector3($"pointLights[{_index}].ambient", Ambient);
         _mainShader.SetVector3($"pointLights[{_index}].diffuse", Diffuse);
         _mainShader.SetVector3($"pointLights[{_index}].specular", Specular);
@@ -44,9 +46,12 @@ public class PointLight : Figure
         _mainShader.SetFloat($"pointLights[{_index}].quadratic",Quadratic);
     }
 
-    public override void Draw(Camera camera, Matrix4 projection)
+    public override void Draw(float deltaTime, Camera camera, Matrix4 projection)
     {
-        // base.Draw(camera, projection);
+        _mainShader.Use();
+        _mainShader.SetVector3($"pointLights[{_index}].position", Position);
+
+        base.Draw(deltaTime, camera, projection);
     }
 
     public static PointLight Create(string name, int index, Vector3 position, Vector3 ambient, Vector3 diffuse, Vector3 specular)

@@ -15,7 +15,7 @@ public abstract class FigureHandler : ISetup, IDrawable, IDisposable
     
     public abstract void Setup();
     
-    public abstract void Draw(Camera camera, Matrix4 projectionMatrix);
+    public abstract void Draw(float deltaTime, Camera camera, Matrix4 projectionMatrix);
 
     public abstract void Dispose();
 }

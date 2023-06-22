@@ -22,7 +22,7 @@ public class Maze : Figure
         
     }
 
-    public override void Draw(Camera camera, Matrix4 projection)
+    public override void Draw(float deltaTime, Camera camera, Matrix4 projection)
     {
         var mesh = _mesh ??= GetMesh();
 

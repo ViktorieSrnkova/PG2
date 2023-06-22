@@ -10,6 +10,7 @@ using CSharp_PG2.Managers.Shader;
 using CSharp_PG2.Managers.Shader.Entity;
 using CSharp_PG2.Scenes;
 using CSharp_PG2.Utils;
+using NUnit.Framework;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -17,7 +18,6 @@ namespace CSharp_PG2;
 
 class Game : GameWindow
 {
-
     private const float FOV = 90;
 
     private bool _mouseGrabbed = false;
@@ -28,12 +28,13 @@ class Game : GameWindow
 
     private int _frameCount;
     private Stopwatch _timer = new Stopwatch();
-    private double _previousTime;
-    
+    private double _previousTime = 0.0;
+    private double _previousTimeFps;
+
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
 
     private Shader _shader;
-    
+
     private Audio _backgroundAudio;
     private Audio _footstepSound;
     private bool _isFootstepSoundPlaying;
@@ -56,7 +57,7 @@ class Game : GameWindow
         _camera = new Camera(new Vector3(0, 1, -1));
         _backgroundAudio = new Audio();
         _backgroundAudio.Load("../../../Music/zia3f-wub88.wav");
-       
+
         _footstepSound = new Audio();
         _footstepSound.Load("../../../Music/duck_feet.wav");
         _isFootstepSoundPlaying = false;
@@ -66,7 +67,6 @@ class Game : GameWindow
     {
         base.OnLoad();
         _timer.Start();
-        _previousTime = _timer.Elapsed.TotalSeconds;
         // _backgroundAudio.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
@@ -85,10 +85,10 @@ class Game : GameWindow
 
         // Enable depth testing
         GL.Enable(EnableCap.DepthTest);
-        
+
         // Transparency
-         GL.Enable(EnableCap.Blend);
-         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
         // Enable face culling
         GL.Enable(EnableCap.CullFace);
@@ -105,7 +105,7 @@ class Game : GameWindow
         }
 
         _shader.Use();
-        _scene = new DefaultScene();
+        _scene = new DefaultScene(_camera);
         _scene.Setup();
 
         _shader.SetVector3("camPos", _camera.Position);
@@ -127,7 +127,7 @@ class Game : GameWindow
     protected override void OnKeyDown(KeyboardKeyEventArgs e)
     {
         base.OnKeyDown(e);
-        
+
         switch (e.Key)
         {
             case Keys.Escape:
@@ -140,27 +140,18 @@ class Game : GameWindow
                 _mouseGrabbed = !_mouseGrabbed;
                 CursorState = _mouseGrabbed ? CursorState.Grabbed : CursorState.Normal;
                 break;
-            case Keys.C:
-                // center camera
-                _camera.Position = new Vector3(0, 0, 3);
-                break;
             case Keys.F:
                 WindowState = WindowState == WindowState.Fullscreen ? WindowState.Normal : WindowState.Fullscreen;
                 break;
         }
-        if (e.Key == Keys.W || e.Key == Keys.A || e.Key == Keys.S || e.Key == Keys.D)
-        {
-            if (!_isFootstepSoundPlaying)
-            {
-                _isFootstepSoundPlaying = true;
-                //_footstepSound.Play();
-            }
-        }
+
+        _scene.OnKeyDown(e);
     }
+
     protected override void OnKeyUp(KeyboardKeyEventArgs e)
     {
         base.OnKeyUp(e);
-        
+
         if (e.Key == Keys.W || e.Key == Keys.A || e.Key == Keys.S || e.Key == Keys.D)
         {
             if (_isFootstepSoundPlaying)
@@ -170,39 +161,40 @@ class Game : GameWindow
             }
         }
     }
-    
+
     protected override void OnRenderFrame(FrameEventArgs e)
     {
         base.OnRenderFrame(e);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        
         double currentTime = _timer.Elapsed.TotalSeconds; //stopwatch se resetuje 
-        double res = currentTime - _previousTime;
-
-        if (res < 0)
+        if (_previousTime == 0.0)
         {
-            res += 1;
+            _previousTime = currentTime;
         }
-        
-        _scene.Draw((float)res, _camera, _projection);
+
+        var deltaTime = currentTime - _previousTime;
+
         _shader.Use();
-        
-        HandleKeyboardInput(res);
-        _previousTime = currentTime;
-        
         _shader.SetVector3("camPos", _camera.Position);
+        _scene.Draw((float)deltaTime, _camera, _projection);
+        _shader.Use();
+
+        _scene.HandleKeyboardInput(KeyboardState,(float) deltaTime);
+        _previousTime = currentTime;
+
+
         _shader.SetVector3("spotLight.direction", _camera.Front);
-        
+
         _consoleWriter.SetMessage(GetInfo());
-        
+
         _frameCount++;
-        if (_timer.ElapsedMilliseconds >= 1000)
+        if (_timer.ElapsedMilliseconds - _previousTimeFps >= 1000)
         {
             fps = _frameCount;
             Title =
                 $"FPS: {_frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
             _frameCount = 0;
-            _timer.Restart();
+            _previousTimeFps = _timer.ElapsedMilliseconds;
         }
 
         SwapBuffers();
@@ -215,6 +207,8 @@ class Game : GameWindow
         var y = $"{position.Y:0.00}";
         var z = $"{position.Z:0.00}";
 
+        var first = _scene.Figures["pointLight_0"];
+
         var info = new Dictionary<string, string>
         {
             { "X", x },
@@ -222,6 +216,7 @@ class Game : GameWindow
             { "Z", z },
             { "FPS", fps.ToString() },
             { "VSync", Context.SwapInterval == 1 ? "On" : "Off" },
+            { "Cube", $"{first.Velocity.ToString()}" }
         };
 
         return info;
@@ -263,7 +258,7 @@ class Game : GameWindow
     protected override void OnMouseMove(MouseMoveEventArgs e)
     {
         base.OnMouseMove(e);
-
+        
         if (_mouseGrabbed)
         {
             var mouseDelta = MouseState.Position - _lastMousePosition;
@@ -278,68 +273,16 @@ class Game : GameWindow
         }
 
         _lastMousePosition = MouseState.Position;
+        _scene.OnMouseMove(MouseState, e);
     }
+
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-    
-        // Adjust the ambient intensity based on the scroll direction
-        if (e.OffsetY > 0)
-        {
-            // Scroll up, increase intensity
-            _ambientIntensity += 0.1f;
-            if (_ambientIntensity > 1.0f)
-                _ambientIntensity = 1.0f;
-        }
-        else
-        {
-            // Scroll down, decrease intensity
-            _ambientIntensity -= 0.1f;
-            if (_ambientIntensity < 0.0f)
-                _ambientIntensity = 0.0f;
-        }
-    
-        // Update the ambient color with the new intensity
-        var ambientColor = new Vector3(1f,1f,1f) * _ambientIntensity;
-        _shader.SetVector3("spotLight.diffuse", ambientColor);
+
+       _scene.OnMouseWheel(MouseState, e);
     }
-
-    private void HandleKeyboardInput(double deltaTime)
-    {
-       
-        
-        if (KeyboardState.IsKeyDown(Keys.W))
-        {
-            _camera.Position += _camera.ProcessInput(Camera.Direction.Forward, (float)deltaTime);
-        }
-
-        if (KeyboardState.IsKeyDown(Keys.S))
-        {
-            _camera.Position += _camera.ProcessInput(Camera.Direction.Backward, (float)deltaTime);
-        }
-
-        if (KeyboardState.IsKeyDown(Keys.A))
-        {
-            _camera.Position += _camera.ProcessInput(Camera.Direction.Left, (float)deltaTime);
-        }
-
-        if (KeyboardState.IsKeyDown(Keys.D))
-        {
-            _camera.Position += _camera.ProcessInput(Camera.Direction.Right, (float)deltaTime);
-        }
-
-        if (KeyboardState.IsKeyDown(Keys.Space))
-        {
-            _camera.Position += _camera.ProcessInput(Camera.Direction.Up, (float)deltaTime);
-        }
-
-        if (KeyboardState.IsKeyDown(Keys.LeftShift))
-        {
-            _camera.Position += _camera.ProcessInput(Camera.Direction.Down, (float)deltaTime);
-        }
-
-    }
-
+    
     private void UpdateProjectionMatrix(ResizeEventArgs e)
     {
         var aspectRatio = (float)e.Width / e.Height;
@@ -351,8 +294,9 @@ class Game : GameWindow
         );
         _projection = projectionMatrix;
     }
-    protected override void OnUnload() {
-        
+
+    protected override void OnUnload()
+    {
         _backgroundAudio.Dispose();
         _footstepSound.Dispose();
         base.OnUnload();
