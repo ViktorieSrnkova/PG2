@@ -4,7 +4,9 @@ namespace CSharp_PG2;
 
 public interface IShaderConfigurable
 {
+
+    public void Setup(Shader shader);
     
-    public void ConfigureShader(Shader shader);
+    public void ConfigureShader(Camera camera, Shader shader);
     
 }

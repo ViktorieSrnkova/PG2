@@ -52,7 +52,7 @@ struct PointLight{
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(fragPos - light.position); // Reverse the calculation
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir =reflect(-lightDir,normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
@@ -63,7 +63,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
     vec3 ambient= light.ambient * material.ambient;
     vec3 diffuse=light.diffuse * (diff * material.diffuse);
     vec3 specular= light.specular * (spec * material.specular);
-    
+
     diffuse *= attenuation;
     specular *= attenuation;
 
@@ -125,7 +125,7 @@ void main()
     }
     //spot
 
-    vec3 result = directionalResult + spotResult +pointResult;
+    vec3 result = directionalResult + spotResult + pointResult;
     
-    FragColor = texture(texture0,texCoord)*vec4(result,1.0f);
+    FragColor = texture(texture0,texCoord) * vec4(result,1.0f);
 }

@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CSharp_PG2.Entities;
 using CSharp_PG2.Events;
+using CSharp_PG2.Managers.Collision;
 using CSharp_PG2.Managers.Object;
 using CSharp_PG2.Managers.Shader.Entity;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2.Scenes;
 
-public abstract class Scene : IDrawable, IDisposable
+public abstract class Scene : IDisposable
 {
     protected readonly Dictionary<string, Figure> Figures = new();
 
@@ -16,16 +18,25 @@ public abstract class Scene : IDrawable, IDisposable
     
     private readonly Dictionary<string, IShaderConfigurable> _shaderConfigurables = new();
 
+    private readonly CollisionManager _collisionManager = new CollisionManager();
+
     public abstract void Setup();
 
     protected abstract Shader GetMainShader();
     
-    public void Draw(Camera camera, Matrix4 projectionMatrix)
+    public void Draw(float deltaTime, Camera camera, Matrix4 projectionMatrix)
     {
         var shader = GetMainShader();
         shader.Use();
-        shader.SetMatrix4("projection", projectionMatrix);
-        shader.SetMatrix4("camPos", camera.GetViewMatrix());
+        shader.SetVector3("camPos", camera.Position);
+
+        foreach (var shaderConfig in _shaderConfigurables.Values)
+        {
+            shaderConfig.ConfigureShader(camera, shader);
+        }
+        
+        _collisionManager.Run(deltaTime, Figures.Values.ToList());
+        
         foreach (var figure in Figures.Values)
         {
             figure.Draw(camera, projectionMatrix);
@@ -42,6 +53,7 @@ public abstract class Scene : IDrawable, IDisposable
     
     public void AddShaderConfigurable(string name, IShaderConfigurable configurable)
     {
+        configurable.Setup(GetMainShader());
         _shaderConfigurables.Add(name, configurable);
     }
     
