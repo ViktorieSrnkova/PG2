@@ -5,6 +5,6 @@ namespace CSharp_PG2;
 public interface IDrawable
 {
 
-    public void Draw(Camera camera, Matrix4 projectionMatrix);
+    public void Draw(float deltaTime, Camera camera, Matrix4 projectionMatrix);
 
 }

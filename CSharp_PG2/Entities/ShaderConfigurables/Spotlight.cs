@@ -12,6 +12,8 @@ public class Spotlight : IShaderConfigurable
     public Vector3 Color { get; set; }
     public float Intensity { get; set; }
 
+    private Vector3 _flashlightIntensity => Color * Intensity;
+    
     public Spotlight(Vector3 color, float intensity)
     {
         Color = color;
@@ -20,9 +22,7 @@ public class Spotlight : IShaderConfigurable
 
     public void Setup(Shader shader)
     {
-        var flashLightIntensity = Color * Intensity;
         shader.SetVector3("spotLight.ambient", new Vector3(0.0f, 0.0f, 0.0f));
-        shader.SetVector3("spotLight.diffuse", flashLightIntensity);
         shader.SetVector3("spotLight.specular", new Vector3(1.0f, 1.0f, 1.0f));
         shader.SetFloat("spotLight.constant", 1.0f);
         shader.SetFloat("spotLight.linear", 0.09f);
@@ -35,7 +35,13 @@ public class Spotlight : IShaderConfigurable
     {
         shader.SetVector3("spotLight.position", camera.Position);
         shader.SetVector3("spotLight.direction", camera.Front);
-        
+        shader.SetVector3("spotLight.diffuse", _flashlightIntensity);
+    }
+    
+    public void AdjustIntensity(bool increase)
+    {
+        Intensity += increase ? 0.1f : -0.1f;
+        Intensity = Math.Clamp(Intensity, 0.0f, 1.0f);
     }
 
     public static Spotlight MakeDefault()

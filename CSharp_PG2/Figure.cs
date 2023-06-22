@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using CSharp_PG2.Entities;
 using CSharp_PG2.Entities.Core;
+using CSharp_PG2.Managers.Collision;
 using CSharp_PG2.Managers.Object.Entity;
 using CSharp_PG2.Managers.Object.Factory;
 using OpenTK.Mathematics;
@@ -20,11 +21,11 @@ public class Figure : IEntity
     public BoundingBox BoundingBox { get; set; }
     protected readonly string Name;
     protected readonly Mesh? Mesh;
+    private Quaternion _rotation = Quaternion.Identity;
+    protected float Roll = 0;
     private Matrix4 _model = Matrix4.Identity;
     public bool IsVisible { get; set; } = true;
-
-    public Vector3 BorderColor { get; set; } = new Vector3(220, 0, 0);
-
+    
     private float _currentRotationAngle = 0f;
     
     public Vector3 BorderColor { get; set; } = new Vector3(220,0,0);
@@ -43,7 +44,7 @@ public class Figure : IEntity
         Name = name;
     }
 
-    public virtual void Draw(Camera camera, Matrix4 projection)
+    public virtual void Draw(float deltaTime, Camera camera, Matrix4 projection)
     {
         Mesh?.Draw(_model, camera.GetViewMatrix(), projection);
 
@@ -79,7 +80,7 @@ public class Figure : IEntity
         _model = Matrix4.CreateTranslation(display);
         BoundingBox.MoveTo(display);
     }
-    
+
     public void RotateLocaly(float angle, Vector3 axis)
     {
         Matrix4 translation = Matrix4.CreateTranslation(-axis);
@@ -88,15 +89,36 @@ public class Figure : IEntity
         _model *= translation * rotation * inverseTranslation;
     }
     
-    public void Rotate(float angle, Vector3 axis)
+    public void Rotate(float pitch, float yaw, float roll)
     {
-        _model *= Matrix4.CreateFromAxisAngle(axis, angle);
+        // Apply rotation logic here
+        // Assuming _model is the model to rotate
+
+        // Create a rotation matrix based on the offsets
+        var rotation = Quaternion.FromEulerAngles(pitch, -yaw, roll);
+        _rotation = Quaternion.Multiply(rotation, _rotation);
+
+        Matrix4 rotationMatrix = Matrix4.CreateFromQuaternion(_rotation);
+        
+        _model *= rotationMatrix;
+        BoundingBox.Model *= rotationMatrix;
+        
+
+        // Apply the rotation to the model's position
+        Position = Vector3.Transform(Position, _rotation);
+        BoundingBox.Position = Position;
     }
 
-    public bool Intersects(Figure other)
+    public CollisionSide Intersects(Figure other)
     {
-        if (BoundingBox == null || other.BoundingBox == null) return false;
+        if (BoundingBox == null || other.BoundingBox == null) return CollisionSide.None;
         return BoundingBox.Intersects(other.BoundingBox);
+    }
+    
+    public CollisionSide IntersectsNextFrame(Figure other, Vector3 velocity)
+    {
+        if (BoundingBox == null || other.BoundingBox == null) return CollisionSide.None;
+        return BoundingBox.Intersects(other.BoundingBox, velocity);
     }
 
     public void Dispose()

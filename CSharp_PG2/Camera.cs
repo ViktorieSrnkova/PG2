@@ -1,3 +1,4 @@
+using System;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2
@@ -23,9 +24,13 @@ public class Camera
     private float _yaw = -90.0f;
     private float _pitch = 0.0f;
     private float _roll = 0.0f;
+    
+    private float _lastXOffset;
 
-    private const float MovementSpeed = 1.0f;
+    private const float MovementSpeed = 3.0f;
     private const float MouseSensitivity = 0.25f;
+    
+    private Figure? _followFigure = null;
 
     public Camera(Vector3 position)
     {
@@ -36,7 +41,8 @@ public class Camera
 
     public Matrix4 GetViewMatrix()
     {
-        return Matrix4.LookAt(Position, Position + Front, _up);
+        var position = Position;//_followFigure?.Position ?? Position;
+        return Matrix4.LookAt(position, Position + Front, _up);
     }
 
     public Vector3 ProcessInput(Direction direction, float deltaTime)
@@ -60,6 +66,12 @@ public class Camera
         xOffset *= MouseSensitivity;
         yOffset *= MouseSensitivity;
 
+        var diff = xOffset - _lastXOffset;
+        
+        _followFigure?.Rotate(0, diff/10, 0);
+        
+        _lastXOffset = xOffset;
+        
         _yaw += xOffset;
         _pitch -= yOffset;
 
@@ -81,6 +93,16 @@ public class Camera
         _roll += roll;
         
         UpdateCameraVectors();
+    }
+    
+    public void Follow(Figure? figure = null)
+    {
+        _followFigure = figure;
+    }
+    
+    public bool IsFollowing()
+    {
+        return _followFigure != null;
     }
 
     private void UpdateCameraVectors()

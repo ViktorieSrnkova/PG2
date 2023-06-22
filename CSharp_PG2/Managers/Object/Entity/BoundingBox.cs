@@ -1,4 +1,5 @@
 using System;
+using CSharp_PG2.Managers.Collision;
 using CSharp_PG2.Managers.Shader;
 using OpenTK.Graphics.ES11;
 using OpenTK.Mathematics;
@@ -24,12 +25,70 @@ public class BoundingBox
         Depth = depth;
     }
     
-    public bool Intersects(BoundingBox other)
+    public CollisionSide Intersects(BoundingBox other)
     {
-        var distance = DistanceFromPosition(other.Position);
-        return distance.X < Width / 2 + other.Width / 2 &&
-               distance.Y < Height / 2 + other.Height / 2 &&
-               distance.Z < Depth / 2 + other.Depth / 2;
+        return Intersects(other, Vector3.Zero);
+    }
+    
+    public CollisionSide Intersects(BoundingBox otherBox, Vector3 velocity)
+    {
+        var adjustedPosition = Position + velocity;
+        
+        // Calculate the boundaries of the two boxes
+        float thisLeft = adjustedPosition.X - Width / 2;
+        float thisRight = adjustedPosition.X + Width / 2;
+        float thisTop = adjustedPosition.Y + Height / 2;
+        float thisBottom = adjustedPosition.Y - Height / 2;
+        float thisFront = adjustedPosition.Z + Depth / 2;
+        float thisBack = adjustedPosition.Z - Depth / 2;
+
+        float otherLeft = otherBox.Position.X - otherBox.Width / 2;
+        float otherRight = otherBox.Position.X + otherBox.Width / 2;
+        float otherTop = otherBox.Position.Y + otherBox.Height / 2;
+        float otherBottom = otherBox.Position.Y - otherBox.Height / 2;
+        float otherFront = otherBox.Position.Z + otherBox.Depth / 2;
+        float otherBack = otherBox.Position.Z - otherBox.Depth / 2;
+
+        // Check for collision on each side
+        bool collides = thisLeft < otherRight &&
+                        thisRight > otherLeft &&
+                        thisTop >= otherBottom &&
+                        thisBottom <= otherTop &&
+                        thisFront > otherBack &&
+                        thisBack < otherFront;
+
+        // Determine the collision side
+        var collisionSide = CollisionSide.None;
+
+        if (collides)
+        {
+            float xPenetration = Math.Min(thisRight - otherLeft, otherRight - thisLeft);
+            float yPenetration = Math.Min(thisTop - otherBottom, otherTop - thisBottom);
+            float zPenetration = Math.Min(thisFront - otherBack, otherFront - thisBack);
+
+            float minPenetration = Math.Min(Math.Min(xPenetration, yPenetration), zPenetration);
+
+            if (xPenetration == minPenetration)
+                collisionSide = adjustedPosition.X < otherBox.Position.X ? CollisionSide.Left : CollisionSide.Right;
+            else if (yPenetration == minPenetration)
+                collisionSide = adjustedPosition.Y < otherBox.Position.Y ? CollisionSide.Bottom : CollisionSide.Top;
+            else
+                collisionSide = adjustedPosition.Z < otherBox.Position.Z ? CollisionSide.Back : CollisionSide.Front;
+        }
+
+        return collisionSide;
+    }
+
+    public Vector3 DistanceFromBoundingBox(BoundingBox other)
+    {
+        // Calculate the center position of each bounding box.
+        Vector3 positionA = Position + new Vector3(Width / 2f, Height / 2f, Depth / 2f);
+        Vector3 positionB = other.Position + new Vector3(other.Width / 2f, other.Height / 2f, other.Depth / 2f);
+
+        // Calculate the distance vector between the two bounding boxes.
+        Vector3 distanceVector = positionA - positionB;
+
+        return distanceVector;
     }
 
     public Vector3 DistanceFromPosition(Vector3 position)
@@ -91,6 +150,5 @@ public class BoundingBox
     {
         return new Vector3(Width, Height, Depth);
     }
-    
-    
+
 }
