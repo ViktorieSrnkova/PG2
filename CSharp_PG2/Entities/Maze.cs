@@ -17,7 +17,7 @@ public class Maze : Figure
     private uint _counter;
     private Mesh? _mesh;
 
-    public Maze(string name = "maze") : base(name)
+    public Maze(string name, string mazeName) : base(name)
     {
         
     }

@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using CSharp_PG2.Managers.Shader;
 using CSharp_PG2.Managers.Shader.Entity;
 using CSharp_PG2.Scenes;
 using CSharp_PG2.Utils;
-using NUnit.Framework;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -67,7 +65,7 @@ class Game : GameWindow
     {
         base.OnLoad();
         _timer.Start();
-        // _backgroundAudio.Play();
+        _backgroundAudio.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
 
@@ -95,7 +93,6 @@ class Game : GameWindow
 
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
-
 
         _shader = ShaderManager.GetInstance().GetShader("default");
 
@@ -157,7 +154,7 @@ class Game : GameWindow
             if (_isFootstepSoundPlaying)
             {
                 _isFootstepSoundPlaying = false;
-                //_footstepSound.Stop();
+                _footstepSound.Stop();
             }
         }
     }
@@ -182,9 +179,7 @@ class Game : GameWindow
         _scene.HandleKeyboardInput(KeyboardState,(float) deltaTime);
         _previousTime = currentTime;
 
-
-        _shader.SetVector3("spotLight.direction", _camera.Front);
-
+        
         _consoleWriter.SetMessage(GetInfo());
 
         _frameCount++;
@@ -206,9 +201,7 @@ class Game : GameWindow
         var x = $"{position.X:0.00}";
         var y = $"{position.Y:0.00}";
         var z = $"{position.Z:0.00}";
-
-        var first = _scene.Figures["pointLight_0"];
-
+        
         var info = new Dictionary<string, string>
         {
             { "X", x },
@@ -216,7 +209,6 @@ class Game : GameWindow
             { "Z", z },
             { "FPS", fps.ToString() },
             { "VSync", Context.SwapInterval == 1 ? "On" : "Off" },
-            { "Cube", $"{first.Velocity.ToString()}" }
         };
 
         return info;
