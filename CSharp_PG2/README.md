@@ -12,15 +12,19 @@
 - [ ] detekce kolizí
 - [ ] správa scény
 - [ ] generování bludiště
+- [ ] gravitace
 ### Možná?
   - [ ] Particles
 
 ## Viky
 - [x] lighting model, alespoň 3 světla (1x ambient)
-- [ ] one moving light
-- [x] audio
+- [x] one moving light
+- [x] 1 audio
+- [ ] 2 audios
 - [x] story board
 - [x] fullscreen vs windowed switching
+- [x] intenzita baterky na scrollwheel
+- [x] movement of ghosts
 ### Možná?
 - [ ] Particles
 
