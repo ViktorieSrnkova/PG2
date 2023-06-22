@@ -78,13 +78,14 @@ public class Maze : Figure
 
     private uint GetIndex(Vector3 point)
     {
-        if (_vertices.ContainsKey(point.ToString()))
+        var format = "({0}, {1}, {2})";
+        if (_vertices.ContainsKey(point.ToString(format)))
         {
-            return _indices[point.ToString()];
+            return _indices[point.ToString(format)];
         }
         
-        _vertices.Add(point.ToString(), point);
-        _indices.Add(point.ToString(), _counter);
+        _vertices.Add(point.ToString(format), point);
+        _indices.Add(point.ToString(format), _counter);
         
         return _counter++;
     }

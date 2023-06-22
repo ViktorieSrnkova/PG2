@@ -80,10 +80,9 @@ public class Mesh : IDisposable
 
     public void Draw(Matrix4 model, Matrix4 view, Matrix4 projection)
     {
-        _shader.Use();
-
         // Texture?.Use(TextureUnit.Texture0);
-
+        _shader.Use();
+        
         _shader.SetMatrix4("model", model);
         _shader.SetMatrix4("view", view);
         _shader.SetMatrix4("proj", projection);

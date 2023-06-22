@@ -4,16 +4,12 @@ using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime;
 using System.Runtime.InteropServices;
-using CSharp_PG2.Managers.Object;
+using System.Threading;
 using CSharp_PG2.Managers.Shader;
 using CSharp_PG2.Managers.Shader.Entity;
-using CSharp_PG2.Managers.Texture;
+using CSharp_PG2.Scenes;
 using CSharp_PG2.Utils;
-using Microsoft.VisualBasic;
-using OpenTK.Audio.OpenAL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -21,84 +17,38 @@ namespace CSharp_PG2;
 
 class Game : GameWindow
 {
+
     private const float FOV = 90;
-    private readonly float[] _lightVertices =
-    {
-        //COORDINATES//         //normals                         //poz
 
-        //front face
-        -0.1f, -0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-        0.1f, -0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-        0.1f, 0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-        -0.1f, 0.1f, -0.1f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-
-        //right face
-        0.1f, -0.1f, -0.1f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.1f, -0.1f, 0.1f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.1f, 0.1f, 0.1f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        0.1f, 0.1f, -0.1f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-
-        //left face
-        -0.1f, -0.1f, 0.1f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        -0.1f, -0.1f, -0.1f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-        -0.1f, 0.1f, -0.1f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        -0.1f, 0.1f, 0.1f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-
-        //bottom face
-        -0.1f, -0.1f, 0.1f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-        0.1f, -0.1f, 0.1f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        0.1f, -0.1f, -0.1f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-        -0.1f, -0.1f, -0.1f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-
-        //top face
-        -0.1f, 0.1f, -0.1f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        0.1f, 0.1f, -0.1f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        0.1f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        -0.1f, 0.1f, 0.1f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-
-        //back face
-        0.1f, -0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -0.1f, -0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-        -0.1f, 0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-        0.1f, 0.1f, 0.1f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-    };
-    private readonly uint[] _lightIndices =
-    {
-        0, 1, 2, 2, 3, 0, // Front face
-        4, 5, 6, 6, 7, 4, // Right face
-        8, 9, 10, 10, 11, 8, // Left face
-        12, 13, 14, 14, 15, 12, // Bottom face
-        16, 17, 18, 18, 19, 16, // Top face
-        20, 21, 22, 22, 23, 20, // Back face
-    };
-    private Vector3[] _pointLightPositions;
-    private Vector3 _ghostCircle;
-    private Vector3 _ghostLine;
-    private Vector3 _ghostSquare;
-    private Vector3 _ghostInfinitySymbol;
     private bool _mouseGrabbed = false;
     private Matrix4 _projection;
-    private Matrix4 _model = Matrix4.Identity;
     private readonly Camera _camera;
+
     private Vector2 _lastMousePosition;
+
     private int _frameCount;
     private Stopwatch _timer = new Stopwatch();
     private double _previousTime;
-    private Dictionary<String, Figure> _figures = new Dictionary<string, Figure>();
+    
     private static readonly DebugProc OnDebugMessageDebugProc = OnDebugMessage;
+
     private Shader _shader;
-    private Mesh _cube;
-   // private Mesh _glass_cube;
+    
     private Audio _backgroundAudio;
     private Audio _footstepSound;
     private bool _isFootstepSoundPlaying;
-    private Movement _movementLight;
+
+
     private ConsoleWriter _consoleWriter = new ConsoleWriter(50);
+
     private int fps = 0;
+
     private int _up = 1;
-    private Vector3 _lightPosition = new Vector3(0, 0.5f, 0);
+
     private float _ambientIntensity = 0.8f;
-   
+
+    private Scene _scene;
+
     public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
     {
@@ -110,7 +60,6 @@ class Game : GameWindow
         _footstepSound = new Audio();
         _footstepSound.Load("../../../Music/duck_feet.wav");
         _isFootstepSoundPlaying = false;
-        _movementLight = new Movement();
     }
 
     protected override void OnLoad()
@@ -118,18 +67,7 @@ class Game : GameWindow
         base.OnLoad();
         _timer.Start();
         _previousTime = _timer.Elapsed.TotalSeconds;
-        _backgroundAudio.Play();
-        
-    _pointLightPositions= new Vector3[] {
-        new Vector3(0.7f,0.2f,2.0f),
-        new Vector3(2.3f,-0.3f,-4.0f),
-        new Vector3(-4.0f,0.3f,-6.0f),
-        new Vector3(0.0f,0.0f,-3.0f)
-    };
-    _ghostCircle=new Vector3(6f, 2f, -6f);
-    _ghostLine=new Vector3(1f, -1.1f, 4f);
-    _ghostSquare=new Vector3(-6f, -1.1f, 6f);
-    _ghostInfinitySymbol=new Vector3(6f, -1.1f, 6f);
+        // _backgroundAudio.Play();
         // Set clear color to black
         GL.ClearColor(new Color4(0.07f, 0.13f, 0.17f, 1.0f));
 
@@ -149,26 +87,14 @@ class Game : GameWindow
         GL.Enable(EnableCap.DepthTest);
         
         // Transparency
-         //GL.Enable(EnableCap.Blend);
-         //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+         GL.Enable(EnableCap.Blend);
+         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
         // Enable face culling
-        // GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.CullFace);
 
         // Set up debug output callback
         GL.DebugMessageCallback(DebugCallback, IntPtr.Zero);
-
-        var lightShader = ShaderManager.GetInstance().GetShader("light");
-        if (lightShader == null) {throw new Exception("Unable to load shader 'light'"); }
-
-        
-        
-        var lightPosition = new Vector3(1.0f, 1.0f, 1.0f);
-        var lightColor = new Vector3(1.0f, 1.0f, 1.0f);
-        var diffuseColor = lightColor * 0.8f; // decrease the influence
-        var ambientColor = lightColor * 0.8f; // low influence
-        // var lightColor = new Vector3(220.0f, 0.0f, 0.0f);
-        // var lightModel = Matrix4.CreateTranslation(lightPosition);
 
 
         _shader = ShaderManager.GetInstance().GetShader("default");
@@ -178,233 +104,14 @@ class Game : GameWindow
             throw new Exception("Unable to load shader");
         }
 
-        var flashLightIntensity = lightColor * _ambientIntensity;
         _shader.Use();
-        _shader.SetVector3("dirLight.direction", new Vector3(-0.2f, -1.0f, -0.3f));
-        _shader.SetVector3("dirLight.ambient", new Vector3(0.1f, 0.1f, 0.1f));
-        _shader.SetVector3("dirLight.diffuse", new Vector3(0.4f, 0.4f, 0.4f));
-        _shader.SetVector3("dirLight.specular", new Vector3(0.5f, 0.5f, 0.5f));
-        
-        _shader.SetVector3("pointLights[0].position", _pointLightPositions[0]);
-        _shader.SetVector3("pointLights[0].ambient", new Vector3(0.05f, 0.05f, 0.05f));
-        _shader.SetVector3("pointLights[0].diffuse", new Vector3(0.8f, 0.8f, 0.8f));
-        _shader.SetVector3("pointLights[0].specular", new Vector3(1.0f, 1.0f, 1.0f));
-        _shader.SetFloat("pointLights[0].constant", 1.0f);
-        _shader.SetFloat("pointLights[0].linear", 0.09f);
-        _shader.SetFloat("pointLights[0].quadratic", 0.032f);
-     
-        _shader.SetVector3("pointLights[1].position", _pointLightPositions[1]);
-        _shader.SetVector3("pointLights[1].ambient", new Vector3(0.05f, 0.05f, 0.05f));
-        _shader.SetVector3("pointLights[1].diffuse", new Vector3(0.8f, 1.8f, 0.8f));
-        _shader.SetVector3("pointLights[1].specular", new Vector3(1.0f, 1.0f, 1.0f));
-        _shader.SetFloat("pointLights[1].constant", 1.0f);
-        _shader.SetFloat("pointLights[1].linear", 0.09f);
-        _shader.SetFloat("pointLights[1].quadratic", 0.032f);
+        _scene = new DefaultScene();
+        _scene.Setup();
 
-        _shader.SetVector3("pointLights[2].position", _pointLightPositions[2]);
-        _shader.SetVector3("pointLights[2].ambient", new Vector3(0.05f, 0.05f, 0.05f));
-        _shader.SetVector3("pointLights[2].diffuse", new Vector3(0.8f, 0.8f, 1.8f));
-        _shader.SetVector3("pointLights[2].specular", new Vector3(1.0f, 1.0f, 1.0f));
-        _shader.SetFloat("pointLights[2].constant", 1.0f);
-        _shader.SetFloat("pointLights[2].linear", 0.09f);
-        _shader.SetFloat("pointLights[2].quadratic", 0.032f);
-        
-        _shader.SetVector3("pointLights[3].ambient", new Vector3(0.05f, 0.05f, 0.05f)*5);
-        _shader.SetVector3("pointLights[3].diffuse", new Vector3(0.8f, 0.8f, 0.8f)*8f);
-        _shader.SetVector3("pointLights[3].specular", new Vector3(1.0f, 1.0f, 1.0f));
-        _shader.SetFloat("pointLights[3].constant", 1.0f*2);
-        _shader.SetFloat("pointLights[3].linear", 0.09f);
-        _shader.SetFloat("pointLights[3].quadratic", 0.032f);
-        
-        _shader.SetVector3("spotLight.position", _camera.Position);
-        _shader.SetVector3("spotLight.direction", _camera.Front);
-        _shader.SetVector3("spotLight.ambient", new Vector3(0.0f, 0.0f, 0.0f));
-        _shader.SetVector3("spotLight.diffuse", flashLightIntensity);
-        _shader.SetVector3("spotLight.specular", new Vector3(1.0f, 1.0f, 1.0f));
-        _shader.SetFloat("spotLight.constant", 1.0f);
-        _shader.SetFloat("spotLight.linear", 0.09f);
-        _shader.SetFloat("spotLight.quadratic", 0.032f);
-        _shader.SetFloat("spotLight.cutOff", (float)Math.Cos(MathHelper.DegreesToRadians(12.5f)));
-        _shader.SetFloat("spotLight.outerCutOff", (float)Math.Cos(MathHelper.DegreesToRadians(17.5f)));
         _shader.SetVector3("camPos", _camera.Position);
-         //_shader.SetMatrix4("model", lightModel);
-
-        var groundTexture = TextureManager.GetInstance().GetTexture("environment:ground");
-        var crateTexture = TextureManager.GetInstance().GetTexture("structures:crate");
-      
-        
-        _cube = new Mesh(lightShader, VertexUtils.ConvertToVertices(_lightVertices), _lightIndices, groundTexture);
-       
-        
-        _figures.Add("lightCube1", new Figure(_cube, lightColor * _pointLightPositions[0]));
-        _figures.Add("lightCube2", new Figure(_cube, lightColor * _pointLightPositions[1]));
-        _figures.Add("lightCube3", new Figure(_cube, lightColor * _pointLightPositions[2]));
-        _figures.Add("lightCube4", new Figure(_cube, lightColor * _pointLightPositions[3]));
-        
-        var obj = ObjectManager.GetInstance().GetObject("cube");
-        if (obj != null)
-        {
-            
-            var mesh = obj.GetMesh();
-           mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
-            var diff = new Vector3(-4f, -1.1f, -5f);
-            var diff2=new Vector3(-4f, -1.1f, 5f);
-            var diff3=new Vector3(4f, -1.1f, 5f);
-            var diff4=new Vector3(4f, -1.1f, -5f);
-            _figures.Add("cube", new Figure(mesh, lightPosition - diff));
-            _figures.Add("cube2", new Figure(mesh, lightPosition - diff2));
-            _figures.Add("cube3", new Figure(mesh, lightPosition - diff3));
-            _figures.Add("cube4", new Figure(mesh, lightPosition - diff4));
-            
-            
-        }
-        
-        var ghost = ObjectManager.GetInstance().GetObject("ghost_shaded");
-        if (ghost != null)
-        {
-            ghost.Scale(0.5f);
-            var mesh = ghost.GetMesh();
-            mesh.TextureUsages.Add(new FaceUtils.TextureUsage{Texture = crateTexture});
-            
-            _figures.Add("ghost1", new Figure(mesh, lightPosition - _ghostLine));
-            _figures.Add("ghost2", new Figure(mesh, lightPosition - _ghostSquare));
-            _figures.Add("ghost3", new Figure(mesh, lightPosition - _ghostInfinitySymbol));
-            _figures.Add("ghost4", new Figure(mesh, lightPosition - _ghostCircle));
-            foreach (var figure in _figures)
-            {
-                if (figure.Key == "ghost4")
-                {
-                    
-                    float rotationAngle = 4f;
-                    // Change this to the desired rotation angle
-                    figure.Value.RotateLocaly(rotationAngle, figure.Value.Position);
-
-                }
-            }
-            
-        }
-        
-        
-        var grnd = ObjectManager.GetInstance().GetObject("ground");
-        if (grnd != null)
-        {
-            var mesh = grnd.GetMesh();
-            mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = groundTexture });
-            var diff = new Vector3(0f, 2f, 0f);
-            _figures.Add("ground", new Figure(mesh, lightPosition-diff));
-
-
-        }
-        var glass = ObjectManager.GetInstance().GetObject("ghost_shaded");
-        if (glass != null)
-        {
-            
-            var mesh = glass.GetMesh();
-            mesh.TextureUsages.Add(new FaceUtils.TextureUsage { Texture = null });
-            
-            var diff = new Vector3(0f, -1f, 0f);
-            _figures.Add("glass", new Figure(mesh, lightPosition-diff));
-
-
-        }
 
         _timer.Start();
-        _consoleWriter.Start();
-
-        SwapBuffers();
-    }
-    protected override void OnRenderFrame(FrameEventArgs e)
-    {
-        base.OnRenderFrame(e);
-        //ALC.MakeContextCurrent(_backgroundAudio.Context); -- this makes the background play but sped up+ footsteps also sped up
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        
-        
-        double currentTime = _timer.Elapsed.TotalSeconds; //stopwatch se resetuje 
-        double res = currentTime - _previousTime;
-        if (res < 0)
-        {
-            res += 1;
-        }
-        HandleKeyboardInput(res);
-        _previousTime = currentTime;
-        
-        _pointLightPositions[3] =new Vector3( _movementLight.Circle(res,1f,1f,10f));
-        _ghostCircle=new Vector3( _movementLight.Circle(res,0f,-1f,3f));
-        _ghostLine = new Vector3(_movementLight.LineZAxis(res));
-        _ghostSquare = new Vector3(_movementLight.Square(res));
-        _ghostInfinitySymbol = new Vector3(_movementLight.InfinitySymbol(res));
-        var viewMatrix = _camera.GetViewMatrix();
- 
-        _shader.SetVector3("camPos", _camera.Position);
-        _shader.SetVector3("spotLight.direction", _camera.Front);
-
-        // random vector3 between 1-2
-        _shader.SetVector3("pointLights[3].position", _pointLightPositions[3]);
-
-        _shader.SetVector3("light.position", _lightPosition);
-        foreach (var figure in _figures)
-        {
-            figure.Value.Draw(_camera, _projection);
-            
-            if (figure.Key == "lightCube")
-            {
-                figure.Value.SetPosition(_lightPosition);
-            }
-            
-            if (figure.Key == "lightCube4")
-            {
-                figure.Value.SetPosition(_pointLightPositions[3]);
-              
-            }
-
-            if (figure.Key == "ghost4")
-            {
-                figure.Value.SetPosition(_ghostCircle+new Vector3(5f,0f,3f));
-                Vector3 direction = _camera.Position - figure.Value.Position;
-                direction.Normalize();
-                float rotationAngle = (float)Math.Atan2(direction.X, direction.Z);
-                figure.Value.RotateLocaly(rotationAngle+4f, figure.Value.Position);
-                
-            }
-
-            if (figure.Key == "ghost1")
-            {
-                figure.Value.SetPosition(_ghostLine+new Vector3(4f,0f,-4f));
-                Vector3 direction = _camera.Position - figure.Value.Position;
-                direction.Normalize();
-                float rotationAngle = (float)Math.Atan2(direction.X, direction.Z);
-                figure.Value.RotateLocaly(rotationAngle+4f, figure.Value.Position);
-            }
-            if (figure.Key == "ghost2")
-            {
-                figure.Value.SetPosition(_ghostSquare+new Vector3(-5f,0f,-3f));
-                Vector3 direction = _camera.Position - figure.Value.Position;
-                direction.Normalize();
-                float rotationAngle = (float)Math.Atan2(direction.X, direction.Z);
-                figure.Value.RotateLocaly(rotationAngle+4f, figure.Value.Position);
-            }
-            if (figure.Key == "ghost3")
-            {
-                figure.Value.SetPosition(_ghostInfinitySymbol);
-                Vector3 direction = _camera.Position - figure.Value.Position;
-                direction.Normalize();
-                float rotationAngle = (float)Math.Atan2(direction.X, direction.Z);
-                figure.Value.RotateLocaly(rotationAngle+4f, figure.Value.Position);
-            }
-        }
-        
-        _consoleWriter.SetMessage(GetInfo());
-
-        _frameCount++;
-        if (this._timer.ElapsedMilliseconds >= 1000)
-        {
-            fps = _frameCount;
-            this.Title =
-                $"FPS: {this._frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
-            _frameCount = 0;
-            _timer.Restart();
-        }
+        // _consoleWriter.Start();
 
         SwapBuffers();
     }
@@ -446,7 +153,7 @@ class Game : GameWindow
             if (!_isFootstepSoundPlaying)
             {
                 _isFootstepSoundPlaying = true;
-                _footstepSound.Play();
+                //_footstepSound.Play();
             }
         }
     }
@@ -459,23 +166,54 @@ class Game : GameWindow
             if (_isFootstepSoundPlaying)
             {
                 _isFootstepSoundPlaying = false;
-                _footstepSound.Stop();
+                //_footstepSound.Stop();
             }
         }
     }
     
+    protected override void OnRenderFrame(FrameEventArgs e)
+    {
+        base.OnRenderFrame(e);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        
+        double currentTime = _timer.Elapsed.TotalSeconds; //stopwatch se resetuje 
+        double res = currentTime - _previousTime;
+
+        if (res < 0)
+        {
+            res += 1;
+        }
+        
+        _scene.Draw((float)res, _camera, _projection);
+        _shader.Use();
+        
+        HandleKeyboardInput(res);
+        _previousTime = currentTime;
+        
+        _shader.SetVector3("camPos", _camera.Position);
+        _shader.SetVector3("spotLight.direction", _camera.Front);
+        
+        _consoleWriter.SetMessage(GetInfo());
+        
+        _frameCount++;
+        if (_timer.ElapsedMilliseconds >= 1000)
+        {
+            fps = _frameCount;
+            Title =
+                $"FPS: {_frameCount} - GPU: {GL.GetString(StringName.Renderer)} - CPU: {System.Environment.ProcessorCount} Cores";
+            _frameCount = 0;
+            _timer.Restart();
+        }
+
+        SwapBuffers();
+    }
+
     private Dictionary<string, string> GetInfo()
     {
         var position = _camera.Position;
         var x = $"{position.X:0.00}";
         var y = $"{position.Y:0.00}";
         var z = $"{position.Z:0.00}";
-        var names = new List<string>();
-        foreach (var figure in _figures)
-        {
-            var pos = figure.Value.Position;
-            names.Add($"{figure.Key}[{pos.X};{pos.Y};{pos.Z}]");
-        }
 
         var info = new Dictionary<string, string>
         {
@@ -562,8 +300,8 @@ class Game : GameWindow
         }
     
         // Update the ambient color with the new intensity
-        var ambientColore = new Vector3(1f,1f,1f) * _ambientIntensity;
-        _shader.SetVector3("spotLight.diffuse", ambientColore);
+        var ambientColor = new Vector3(1f,1f,1f) * _ambientIntensity;
+        _shader.SetVector3("spotLight.diffuse", ambientColor);
     }
 
     private void HandleKeyboardInput(double deltaTime)
@@ -599,27 +337,7 @@ class Game : GameWindow
         {
             _camera.Position += _camera.ProcessInput(Camera.Direction.Down, (float)deltaTime);
         }
-        
-        if (KeyboardState.IsKeyDown(Keys.Up))
-        {
-            _lightPosition += new Vector3(0, (float)deltaTime, 0);
-        }
-        
-        if (KeyboardState.IsKeyDown(Keys.Down))
-        {
-            _lightPosition -= new Vector3(0, (float)deltaTime, 0);
-        }
-        
-        if (KeyboardState.IsKeyDown(Keys.Left))
-        {
-            _lightPosition -= new Vector3((float)deltaTime, 0, 0);
-        }
-        
-        if (KeyboardState.IsKeyDown(Keys.Right))
-        {
-            _lightPosition += new Vector3((float)deltaTime, 0, 0);
-        }
-     
+
     }
 
     private void UpdateProjectionMatrix(ResizeEventArgs e)

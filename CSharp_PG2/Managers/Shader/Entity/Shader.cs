@@ -10,7 +10,8 @@ public class Shader
 {
     private Logger _logger = new Logger("Shader");
     public readonly int Handle;
-    private readonly Dictionary<string, int> _uniformLocations = new Dictionary<string, int>();
+    private readonly Dictionary<string, int> _uniformLocations;
+    private readonly Dictionary<string, int> _counter = new();
 
     public Shader(string vertexPath, string fragmentPath)
     {
@@ -64,6 +65,16 @@ public class Shader
         }
     }
 
+    private void AddToCounter(string name)
+    {
+        if (!_counter.ContainsKey(name))
+        {
+            _counter.Add(name, 0);
+        }
+
+        _counter[name] += 1;
+    }
+    
     public int GetAttribLocation(string attribName) {
         return GL.GetAttribLocation(Handle, attribName);
     }
@@ -74,6 +85,7 @@ public class Shader
             return;
         };
         GL.Uniform1(_uniformLocations[name], data);
+        AddToCounter(name);
     }
 
     public void SetFloat(string name, float data) {
@@ -82,6 +94,7 @@ public class Shader
             return;
         }
         GL.Uniform1(_uniformLocations[name], data);
+        AddToCounter(name);
     }
 
     public void SetMatrix4(string name, Matrix4 data)
@@ -91,6 +104,7 @@ public class Shader
             return;
         }
         GL.UniformMatrix4(_uniformLocations[name], false, ref data);
+        AddToCounter(name);
     }
 
     public void SetVector3(string name, Vector3 data) {
@@ -99,6 +113,7 @@ public class Shader
             return;
         }
         GL.Uniform3(_uniformLocations[name], data);
+        AddToCounter(name);
     }
     
     public void SetVector4(string name, Vector4 data) {
@@ -107,6 +122,7 @@ public class Shader
             return;
         }
         GL.Uniform4(_uniformLocations[name], data);
+        AddToCounter(name);
     }
     
     private static void LinkProgram(int program)
