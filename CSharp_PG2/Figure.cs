@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using OpenTK.Mathematics;
 
 namespace CSharp_PG2;
@@ -9,6 +11,7 @@ public class Figure : IDisposable
     public Vector3 Position { get; set; } = Vector3.Zero;
     private Matrix4 _model = Matrix4.Identity;
     public bool IsVisible { get; set; } = true;
+    private float _currentRotationAngle = 0f;
     
     public Figure(Mesh mesh, Vector3 position)
     {
@@ -35,11 +38,14 @@ public class Figure : IDisposable
         _model = Matrix4.CreateTranslation(position);
     }
     
-    public void Rotate(float angle, Vector3 axis)
+    public void RotateLocaly(float angle, Vector3 axis)
     {
-        _model *= Matrix4.CreateFromAxisAngle(axis, angle);
+        Matrix4 translation = Matrix4.CreateTranslation(-axis);
+        Matrix4 rotation = Matrix4.CreateRotationY(angle);
+        Matrix4 inverseTranslation = Matrix4.CreateTranslation(axis);
+        _model *= translation * rotation * inverseTranslation;
     }
-
+    
 
     public void Dispose()
     {
