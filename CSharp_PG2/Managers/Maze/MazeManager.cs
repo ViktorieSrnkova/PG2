@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using CSharp_PG2.Entities;
@@ -8,7 +9,14 @@ namespace CSharp_PG2.Managers.Maze;
 public class MazeManager
 {
 
-    public static List<Figure> GetMazeFigures(int[,,] maze)
+    public static List<Figure> GetMazeReady(string mazeName, Vector3 startPosition, bool isStatic = true, int height = 3)
+    {
+        var loaded = MazeManager.GetMaze(mazeName);
+        var mappedMaze = MazeManager.MapMaze(loaded, height);
+        return GetMazeFigures($"{mazeName}-{new Random().Next()}",mappedMaze, startPosition, isStatic);
+    }
+    
+    public static List<Figure> GetMazeFigures(string mazeName, int[,,] maze, Vector3 startPosition, bool isStatic = true)
     {
         List<Figure> figures = new List<Figure>();
 
@@ -27,8 +35,8 @@ public class MazeManager
                     if (value == 1)
                     {
                         // Create a wall figure at the specified position
-                        var wallEntity = new BasicEntity($"wall_({x},{y},{z})", new Vector3(x, y, z), "crate");
-                        wallEntity.IsStatic = true;
+                        var wallEntity = new BasicEntity($"{mazeName}_({x},{y},{z})", startPosition+new Vector3(x, y, z), "crate");
+                        wallEntity.IsStatic = isStatic;
                         figures.Add(wallEntity);
                     }
                     // Add more conditions as needed for different types of figures

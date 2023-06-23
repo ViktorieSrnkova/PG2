@@ -1,27 +1,24 @@
 using System;
 using OpenTK.Mathematics;
 
-namespace CSharp_PG2.Entities.Ghost;
+namespace CSharp_PG2.Entities;
 
-public class GhostCircular : Ghost
+public class PointLightCircle : PointLight
 {
-    
-    public float Y { get; set; }
-    public float Dir { get; set; }
-    public float Radius { get; set; }
+
+    public float Dir { get; set; } = -1;
+    public float Radius { get; set; } = 20;
     
     private double _elapsedTime = 0.0;
     private double _rotationPeriod = 5.0;
 
     private Vector3 _offset;
-
-    public GhostCircular(string name, Vector3 position, float y, float dir, float radius) : base(name, position)
+    
+    public PointLightCircle(string name, int index, Mesh mesh, Vector3 position, Vector3 ambient, Vector3 diffuse, Vector3 specular) : base(name, index, mesh, position, ambient, diffuse, specular)
     {
         IsStatic = true;
-        Y = y;
-        Dir = dir;
-        Radius = radius;
-        _offset = new Vector3(Position.X, y, Position.Z);
+
+        _offset = Position;
     }
 
     public override void Draw(float deltaTime, Camera camera, Matrix4 projection)
@@ -45,4 +42,10 @@ public class GhostCircular : Ghost
         
         base.Draw(deltaTime, camera, projection);
     }
+    
+    public static PointLightCircle CreateCircular(string name, int index, Vector3 position, Vector3 ambient, Vector3 diffuse, Vector3 specular)
+        {
+            var mesh = GetMesh();
+            return new PointLightCircle(name, index, mesh, position, ambient, diffuse, specular);
+        }
 }

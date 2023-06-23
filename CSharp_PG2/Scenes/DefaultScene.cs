@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CSharp_PG2.Entities;
 using CSharp_PG2.Entities.Ghost;
 using CSharp_PG2.Entities.ShaderConfigurables;
@@ -42,8 +43,7 @@ public class DefaultScene : Scene
         {
             new Vector3(3f, 20f, 3f),
             new Vector3(-3f, 20f, 3f),
-            new Vector3(3f, 20f, 0f),
-            new Vector3(-3f, 20f, 0f)
+            new Vector3(3f, 20f, 0f)
         };
 
         for (int i = 0; i < lights.Length; i++)
@@ -60,11 +60,18 @@ public class DefaultScene : Scene
             light.Velocity = new Vector3(0, 5, 0);
             Figures.Add(light.GetName(), light);
         }
+        
+        var circularLight = PointLightCircle.CreateCircular("pointLight_circular", 3, Vector3.UnitY*5, new Vector3(0.05f, 0.05f, 0.05f),
+                new Vector3(1f, 0.8f, 0.8f),
+                new Vector3(1, 1, 1));
+
+        circularLight.Radius = 10;
+        Figures.Add(circularLight.GetName(), circularLight);
 
         var ghost = new Ghost("ghost", new Vector3(5,5,5));
         Figures.Add(ghost.GetName(), ghost);
         
-        var ghostCircular = new GhostCircular("ghost_circular", Vector3.Zero, 0, -1, 30);
+        var ghostCircular = new GhostCircular("ghost_circular", new Vector3(10, 0,10), 0, -1, 3);
         Figures.Add(ghostCircular.GetName(), ghostCircular);
         
         var ghostSquare = new GhostSquare("ghost_square", Vector3.Zero);
@@ -81,14 +88,8 @@ public class DefaultScene : Scene
         };
         Figures.Add("ground", ground);
 
-        var maze = MazeManager.GetMaze("maze");
-        var mappedMaze = MazeManager.MapMaze(maze, 3);
-        var figures = MazeManager.GetMazeFigures(mappedMaze);
-        
-        foreach (var figure in figures)
-        {
-            Figures.Add(figure.GetName(), figure);
-        }
+        var mazeFigures = MazeManager.GetMazeReady("maze", new Vector3(0, 0, 0), height:2);
+        mazeFigures.ForEach(figure => Figures.Add(figure.GetName(), figure));
 
         // var maze = new Maze("Maze");
         // Figures.Add(maze.GetName(), maze);

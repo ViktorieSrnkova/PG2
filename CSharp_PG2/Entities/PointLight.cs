@@ -61,7 +61,7 @@ public class PointLight : Figure
         return new PointLight(name, index, mesh, position, ambient, diffuse, specular);
     }
     
-    private static Mesh GetMesh()
+    protected static Mesh GetMesh()
     {
         var obj = ObjectManager.GetInstance().GetObject(ObjectName);
 
