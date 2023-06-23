@@ -34,9 +34,6 @@ class Game : GameWindow
     private Shader _shader;
 
     private Audio _backgroundAudio;
-    private Audio _footstepSound;
-    private bool _isFootstepSoundPlaying;
-
 
     private ConsoleWriter _consoleWriter = new ConsoleWriter(50);
 
@@ -55,10 +52,6 @@ class Game : GameWindow
         _camera = new Camera(new Vector3(0, 1, -1));
         _backgroundAudio = new Audio();
         _backgroundAudio.Load("../../../Music/zia3f-wub88.wav");
-
-        _footstepSound = new Audio();
-        _footstepSound.Load("../../../Music/duck_feet.wav");
-        _isFootstepSoundPlaying = false;
     }
 
     protected override void OnLoad()
@@ -143,20 +136,6 @@ class Game : GameWindow
         }
 
         _scene.OnKeyDown(e);
-    }
-
-    protected override void OnKeyUp(KeyboardKeyEventArgs e)
-    {
-        base.OnKeyUp(e);
-
-        if (e.Key == Keys.W || e.Key == Keys.A || e.Key == Keys.S || e.Key == Keys.D)
-        {
-            if (_isFootstepSoundPlaying)
-            {
-                _isFootstepSoundPlaying = false;
-                _footstepSound.Stop();
-            }
-        }
     }
 
     protected override void OnRenderFrame(FrameEventArgs e)
@@ -290,7 +269,6 @@ class Game : GameWindow
     protected override void OnUnload()
     {
         _backgroundAudio.Dispose();
-        _footstepSound.Dispose();
         base.OnUnload();
     }
 }
