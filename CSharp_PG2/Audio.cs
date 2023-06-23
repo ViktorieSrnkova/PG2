@@ -43,7 +43,6 @@ public class Audio : IDisposable
         AL.Source(_source, ALSourceb.Looping, true);
         AL.Source(_source, ALSourcef.Gain, 0.2f);
         AL.Source(_source, ALSourcef.Pitch, 1.0f);
-        //AL.SourcePlay(_source); --this makes the footsteps play before keypress but allows both sounds together when context in onrenderframe
      
     }
 
