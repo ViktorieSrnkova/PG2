@@ -51,7 +51,7 @@ class Game : GameWindow
         _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(FOV), 1f, 0.1f, 100f);
         _camera = new Camera(new Vector3(0, 1, -1));
         _backgroundAudio = new Audio();
-        _backgroundAudio.Load("../../../Music/zia3f-wub88.wav");
+        _backgroundAudio.Load("../../../Music/13zw5-ay2qo.wav");
     }
 
     protected override void OnLoad()
