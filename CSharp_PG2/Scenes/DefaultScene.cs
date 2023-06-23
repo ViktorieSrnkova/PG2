@@ -41,29 +41,30 @@ public class DefaultScene : Scene
         
         var lights = new Vector3[]
         {
-            new Vector3(3f, 20f, 3f),
-            new Vector3(-3f, 20f, 3f),
-            new Vector3(3f, 20f, 0f)
+            new Vector3(6f, 10f, 6f),
+            new Vector3(-6f, 25f, 6f),
+            new Vector3(6f, 35f, 0f)
         };
 
+        var ambient = new Vector3(0.05f, 0.05f, 0.05f);
+        var diffuse = new Vector3(1.8f, 0.8f, 0.8f);
+        var specular = new Vector3(1, 1, 1);
         for (int i = 0; i < lights.Length; i++)
         {
             var light = PointLight.Create(
                 $"pointLight_{i}",
                 i,
                 lights[i],
-                new Vector3(0.05f, 0.05f, 0.05f),
-                new Vector3(1f, 0.8f, 0.8f),
-                new Vector3(1, 1, 1)
-            );
+                ambient,
+                diffuse,
+                specular
+                );
 
-            light.Velocity = new Vector3(0, 5, 0);
+            light.Velocity = new Vector3(0, 0, 0);
             Figures.Add(light.GetName(), light);
         }
         
-        var circularLight = PointLightCircle.CreateCircular("pointLight_circular", 3, Vector3.UnitY*5, new Vector3(0.05f, 0.05f, 0.05f),
-                new Vector3(1f, 0.8f, 0.8f),
-                new Vector3(1, 1, 1));
+        var circularLight = PointLightCircle.CreateCircular("pointLight_circular", 3, Vector3.UnitY*5, ambient, diffuse, specular);
 
         circularLight.Radius = 10;
         Figures.Add(circularLight.GetName(), circularLight);
@@ -90,9 +91,6 @@ public class DefaultScene : Scene
 
         var mazeFigures = MazeManager.GetMazeReady("maze", new Vector3(0, 0, 0), height:2);
         mazeFigures.ForEach(figure => Figures.Add(figure.GetName(), figure));
-
-        // var maze = new Maze("Maze");
-        // Figures.Add(maze.GetName(), maze);
     }
 
     protected override Shader GetMainShader()
