@@ -10,8 +10,8 @@ public class CollisionManager
     
     public const float GravityAcceleration = 9.81f;
     public const float AirDragCoefficient = 0.1f;
-    public const float PrimaryFriction = 0.9f;
-    public const float SecondaryFriction = 1f;
+    public const float PrimaryFriction = 0.8f;
+    public const float SecondaryFriction = 0.9f;
     
     public void Run(float deltaTime, List<Figure> figures)
     {

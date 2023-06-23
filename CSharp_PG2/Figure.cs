@@ -82,6 +82,11 @@ public class Figure : IEntity
         _model = Matrix4.CreateTranslation(display);
         BoundingBox.MoveTo(display);
     }
+    
+    public void AddVelocity(Vector3 velocity)
+    {
+        Velocity += velocity;
+    }
 
     public void RotateLocaly(float angle, Vector3 axis)
     {
